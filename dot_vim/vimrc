@@ -8,14 +8,16 @@ filetype plugin on
 set hlsearch incsearch ignorecase
 set number relativenumber autoindent smartindent
 set shiftwidth=4
+set encoding=UTF-8
 
 set completeopt=longest,menu,menuone,preview,noselect,noinsert
-inoremap <expr> <CR> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 inoremap <expr> <C-n> pumvisible() ? '<C-n>' : '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 inoremap <expr> <M-,> pumvisible() ? '<C-n>' : '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
 
 let mapleader="\<space>"
 let loaded_matchparen=1
+set showmatch
 
 if $COLORTERM == 'truecolor'
   set termguicolors
@@ -23,28 +25,29 @@ endif
 
 nnoremap <leader>t :botright term<CR>
 
-"--- Netrw settings -------------------------------------------------------------------"
-let g:netrw_liststyle=3
-let g:netrwbufsettings='relativenumber nobuflisted nomodifiable nomodified readonly'
-let g:netrw_bufsettings='noma nomod nu nobl nowrap ro'
-
 "=== PLUGINS =========================================================================="
 
 function! s:packager_init(packager) abort
   call a:packager.add('kristijanhusak/vim-packager', {'type': 'opt'})
   call a:packager.add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
   call a:packager.add('junegunn/fzf.vim')
-  call a:packager.add('sainnhe/sonokai')
-
   call a:packager.add('yegappan/lsp')
-  call a:packager.add('justinmk/vim-sneak')
-  call a:packager.add('airblade/vim-gitgutter')
+  call a:packager.add('dense-analysis/ale')
+  call a:packager.add('907th/vim-auto-save')
+
+  call a:packager.add('sainnhe/sonokai')
+  call a:packager.add('lambdalisue/fern.vim', {'requires': [
+      \ 'lambdalisue/fern-git-status.vim',
+      \ 'lambdalisue/fern-renderer-devicons.vim',
+      \ 'lambdalisue/fern-hijack.vim']})
   call a:packager.add('jiangmiao/auto-pairs')
-  call a:packager.add('tpope/vim-fugitive')
-  call a:packager.add('itchyny/lightline.vim')
+  call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
+  call a:packager.add('janko-m/vim-test')
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('tpope/vim-dadbod')
   call a:packager.add('kristijanhusak/vim-dadbod-ui')
+
+  call a:packager.add('ryanoasis/vim-devicons')
 endfunction
 
 packadd vim-packager
@@ -55,10 +58,24 @@ let g:mapleader = "\<Space>"
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 
 "--- LSP settings ---------------------------------------------------------------------"
+let lspOpts = #{
+    \ aleSupport: v:true,
+    \ autoComplete: v:false,
+    \ autoHighlight: v:true,
+    \ autoHighlightDiags: v:true,
+    \ noNewLineInCompletion: v:true,
+    \ omniComplete: v:true,
+    \ outlineOnRight: v:true,
+    \ outlineWinSize: 70,
+    \ usePopupInCodeAction: v:true,
+    \ showDiagWithVirtualText: v:true,
+\ }
+autocmd VimEnter * call LspOptionsSet(lspOpts)
+
 let lspServers = [
     \ #{ name: 'gopls', filetype: ['go', 'gomod'],  path: 'gopls', args: ['serve'] },
     \ #{ name: 'pylsp', filetype: ['py', 'python'], path: 'pylsp', args: []        },
-    \]
+\ ]
 autocmd VimEnter * call LspAddServer(lspServers)
 
 "Enable auto selection of the fist autocomplete item
@@ -67,31 +84,76 @@ augroup LspSetup
     au User LspAttached set completeopt-=noselect
 augroup END
 
-let lspOpts = #{
-    \ autoHighlight: v:true,
-    \ noNewLineInCompletion: v:true,
-    \ usePopupInCodeAction: v:true,
-    \ noNewlineInCompletion: v:true,
-    \ autoHighlightDiags: v:true,
-    \ showDiagWithVirtualText: v:true,
-    \ outlineOnRight: v:true,
-    \ outlineWinSize: 70,
-    \ }
-autocmd VimEnter * call LspOptionsSet(lspOpts)
-
-nnoremap <leader>lp :LspPeekDefinition<CR>
-nnoremap <leader>lgd :LspGoToDefinition<CR>
+nnoremap <leader>lh :LspHover<CR>
+nnoremap <leader>ld :LspGotoDefinition<CR>
 nnoremap <leader>lr :LspRename<CR>
 
-"--- Fuzzy Finder Settings ------------------------------------------------------------"
-nnoremap <leader>fl :Lines<CR>
-nnoremap <leader>ff :Files<CR>
-nnoremap <leader>fg :GFiles<CR>
-nnoremap <leader>fb :Buffers<CR>
+"--- ALE settings ---------------------------------------------------------------------"
+"Disable ALE's LSP in favour of standalone LSP plugin
+let g:ale_disable_lsp = 1
 
-"--- Lightline settings ---------------------------------------------------------------"
-set laststatus=2 noshowmode
-let g:lightline = {'component_function': {'gitbranch': 'FugitiveHead'}}
+"Disable gutter signs so it doesn't overlap with gitsigns; highlight errors inline
+let g:ale_set_signs = 0
+let g:ale_set_highlights = 1
+
+"Only fix and lint on save due to auto-save plugin
+let g:ale_fix_on_save = 1
+let g:ale_lint_on_save = 1
+let g:ale_lint_on_text_change = 'never'
+let g:ale_lint_on_insert_leave = 0
+
+"Set linters for individual filetypes
+let g:ale_linters_explicit = 1
+let g:ale_linters = {
+    \ 'go': ['gofmt', 'gopls', 'govet', 'gobuild'],
+    \ 'proto': ['buf-lint', 'protoc-gen-lint'],
+    \ 'python': ['ruff'],
+    \ 'yaml': ['yamllint'],
+\ }
+
+"Specify fixers for individual filetypes
+let g:ale_fixers = {
+    \ '*': ['trim_whitespace'],
+    \ 'python': ['ruff'],
+    \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
+    \ 'proto': ['buf-format', 'protolint'],
+\ }
+
+"--- Fuzzy Finder Settings ------------------------------------------------------------"
+"Mappings for searching within files and buffers
+nnoremap <leader>f :Lines<CR>
+nnoremap <leader>g :GFiles<CR>
+nnoremap <leader>F :Rg<CR>
+nnoremap <leader>b :Buffers<CR>
+
+"Map buffer quick switch keys
+nnoremap <leader><Tab> <C-^><CR>
+
+"--- Fern Filetree settings -----------------------------------------------------------"
+let g:fern#renderer = "devicons"
+let g:fern#default_hidden = 1
+let g:fern#default_exclude = '\%(\.DS_Store\|__pycache__\|.pytest_cache\|.ruff_cache\|.git\)'
+
+nnoremap <leader>a :Fern . -drawer -toggle<CR>
+
+"--- AutoSave settings ----------------------------------------------------------------"
+set noswapfile
+
+let g:auto_save = 1
+let g:auto_save_silent = 1
+let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
+
+"--- Mistfly statusline settings ------------------------------------------------------"
+"Don't show the mode as it is present in statusline; always show the statusline
+set noshowmode laststatus=2
+
+"--- Vim Test settings ----------------------------------------------------------------"
+nnoremap <leader>tt :TestNearest<CR>
+nnoremap <leader>tf :TestFile<CR>
+nnoremap <leader>ts :TestSuite<CR>
+nnoremap <leader>tl :TestLast<CR>
+
+let test#strategy = "vimterminal"
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
