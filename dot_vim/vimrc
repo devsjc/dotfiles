@@ -10,11 +10,6 @@ set number relativenumber autoindent smartindent
 set shiftwidth=4
 set encoding=UTF-8
 
-set completeopt=longest,menu,menuone,preview,noselect,noinsert
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
-inoremap <expr> <C-n> pumvisible() ? '<C-n>' : '<C-n><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
-inoremap <expr> <M-,> pumvisible() ? '<C-n>' : '<C-x><C-o><C-n><C-p><C-r>=pumvisible() ? "\<lt>Down>" : ""<CR>'
-
 let mapleader="\<space>"
 let loaded_matchparen=1
 set showmatch
@@ -23,26 +18,32 @@ if $COLORTERM == 'truecolor'
   set termguicolors
 endif
 
-nnoremap <leader>t :botright term<CR>
+nnoremap <leader>c :botright term<CR>
 
 "=== PLUGINS =========================================================================="
 
 function! s:packager_init(packager) abort
   call a:packager.add('kristijanhusak/vim-packager', {'type': 'opt'})
+  "Navigation and search
   call a:packager.add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
   call a:packager.add('junegunn/fzf.vim')
+  "Language-aware actions, linting & fixing, autocompletion
   call a:packager.add('yegappan/lsp')
   call a:packager.add('dense-analysis/ale')
+  "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
-
-  call a:packager.add('sainnhe/sonokai')
+  call a:packager.add('jiangmiao/auto-pairs')
+  call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
   call a:packager.add('lambdalisue/fern.vim', {'requires': [
       \ 'lambdalisue/fern-git-status.vim',
       \ 'lambdalisue/fern-renderer-devicons.vim',
       \ 'lambdalisue/fern-hijack.vim']})
-  call a:packager.add('jiangmiao/auto-pairs')
-  call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
-  call a:packager.add('janko-m/vim-test')
+  call a:packager.add('janko-m/vim-test', 
+      \ {'requires': ['tpope/vim-dispatch', 'skywind3000/asyncrun.vim']})
+  "Colours and syntax highlighting
+  call a:packager.add('sheerun/vim-polyglot')
+  call a:packager.add('catppuccin/vim', {"as": "catppuccin"})
+  "Misc helper plugins
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('tpope/vim-dadbod')
   call a:packager.add('kristijanhusak/vim-dadbod-ui')
@@ -56,21 +57,23 @@ call packager#setup(function('s:packager_init'))
 "--- WhichKey settings ----------------------------------------------------------------"
 let g:mapleader = "\<Space>"
 nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
+set timeoutlen=200
 
 "--- LSP settings ---------------------------------------------------------------------"
-let lspOpts = #{
-    \ aleSupport: v:true,
-    \ autoComplete: v:false,
+"Highlights: don't use loclist (used by ALE for diags)
+let lspOptions = #{
     \ autoHighlight: v:true,
-    \ autoHighlightDiags: v:true,
-    \ noNewLineInCompletion: v:true,
-    \ omniComplete: v:true,
+    \ completionTextEdit: v:true,
+    \ diagVirtualTextAlign: 'after',
+    \ highlightDiagInline: v:true,
+    \ noNewlineInCompletion: v:true,
     \ outlineOnRight: v:true,
     \ outlineWinSize: 70,
-    \ usePopupInCodeAction: v:true,
-    \ showDiagWithVirtualText: v:true,
-\ }
-autocmd VimEnter * call LspOptionsSet(lspOpts)
+    \ showDiagWithSign: v:false,
+    \ showDiagWithVirtualText: v:false,
+    \ useQuickfixForLocations: v:true,
+    \ }
+autocmd VimEnter * call LspOptionsSet(lspOptions)
 
 let lspServers = [
     \ #{ name: 'gopls', filetype: ['go', 'gomod'],  path: 'gopls', args: ['serve'] },
@@ -83,21 +86,29 @@ augroup LspSetup
     au!
     au User LspAttached set completeopt-=noselect
 augroup END
+"Diasble newline on selecting completion option
+inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
+"Use LSPHover as resolver for K command in normal mode
+set keywordprg=:LspHover
 
-nnoremap <leader>lh :LspHover<CR>
-nnoremap <leader>ld :LspGotoDefinition<CR>
-nnoremap <leader>lr :LspRename<CR>
+"Mappings for most-used functions
+nnoremap <leader>i :LspHover<CR>
+nnoremap <leader>d :LspGotoDefinition<CR>
+nnoremap <leader>p :LspPeekDefinition<CR>
+nnoremap <leader>R :LspRename<CR>
+nnoremap <leader>r :LspPeekReferences<CR>
+nnoremap <leader>o :LspDocumentSymbol<CR>
 
 "--- ALE settings ---------------------------------------------------------------------"
 "Disable ALE's LSP in favour of standalone LSP plugin
 let g:ale_disable_lsp = 1
 
-"Disable gutter signs so it doesn't overlap with gitsigns; highlight errors inline
+"Disable showing linting errors visually - open with loclist instead
 let g:ale_set_signs = 0
-let g:ale_set_highlights = 1
+let g:ale_set_highlights = 0
+let g:ale_virtualtext_cursor = 0
 
-"Only fix and lint on save due to auto-save plugin
-let g:ale_fix_on_save = 1
+"Only lint on save due to auto-save plugin
 let g:ale_lint_on_save = 1
 let g:ale_lint_on_text_change = 'never'
 let g:ale_lint_on_insert_leave = 0
@@ -110,7 +121,6 @@ let g:ale_linters = {
     \ 'python': ['ruff'],
     \ 'yaml': ['yamllint'],
 \ }
-
 "Specify fixers for individual filetypes
 let g:ale_fixers = {
     \ '*': ['trim_whitespace'],
@@ -118,6 +128,16 @@ let g:ale_fixers = {
     \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
     \ 'proto': ['buf-format', 'protolint'],
 \ }
+"Don't warn about trailing whitespace, as it is auto-fixed by '*' above
+let g:ale_warn_about_trailing_whitespace = 0
+"Show info, warnings, and errors; Write which linter produced the message
+let g:ale_lsp_show_message_severity = 'information'
+let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
+"Specify Containerfiles as Dockerfiles
+let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+
+"Mapping to run fixers on file, and view lint errors
+nnoremap <leader>L :ALEFix \| :lope<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
@@ -143,17 +163,20 @@ let g:auto_save = 1
 let g:auto_save_silent = 1
 let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
 
+"--- Polyglot settings ----------------------------------------------------------------"
+let g:polyglot_disabled = ['sensible']
+
 "--- Mistfly statusline settings ------------------------------------------------------"
 "Don't show the mode as it is present in statusline; always show the statusline
 set noshowmode laststatus=2
 
 "--- Vim Test settings ----------------------------------------------------------------"
-nnoremap <leader>tt :TestNearest<CR>
+nnoremap <leader>tn :TestNearest<CR>
 nnoremap <leader>tf :TestFile<CR>
 nnoremap <leader>ts :TestSuite<CR>
 nnoremap <leader>tl :TestLast<CR>
 
-let test#strategy = "vimterminal"
+let test#strategy = "dispatch"
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
@@ -166,6 +189,6 @@ let g:db_ui_table_helpers = {
 \   }
 \ }
 
-"--- Sonokai settings -----------------------------------------------------------------"
-colorscheme sonokai
+"--- Colorscheme settings -----------------------------------------------------------------"
+colorscheme catppuccin_macchiato
 
