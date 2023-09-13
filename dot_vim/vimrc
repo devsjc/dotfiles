@@ -42,7 +42,7 @@ function! s:packager_init(packager) abort
       \ {'requires': ['tpope/vim-dispatch', 'skywind3000/asyncrun.vim']})
   "Colours and syntax highlighting
   call a:packager.add('sheerun/vim-polyglot')
-  call a:packager.add('catppuccin/vim', {"as": "catppuccin"})
+  call a:packager.add('sainnhe/sonokai')
   "Misc helper plugins
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('tpope/vim-dadbod')
@@ -190,5 +190,5 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
-colorscheme catppuccin_macchiato
+colorscheme sonokai
 
