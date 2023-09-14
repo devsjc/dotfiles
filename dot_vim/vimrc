@@ -3,22 +3,18 @@
 unlet! skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
-syntax on
-filetype plugin on
+syntax enable
+filetype plugin indent on
 set hlsearch incsearch ignorecase
-set number relativenumber autoindent smartindent
-set shiftwidth=4
+set number relativenumber 
 set encoding=UTF-8
-
-let mapleader="\<space>"
-let loaded_matchparen=1
-set showmatch
+set updatetime=100
 
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
 
-nnoremap <leader>c :botright term<CR>
+let mapleader="\<space>"
 
 "=== PLUGINS =========================================================================="
 
@@ -30,6 +26,7 @@ function! s:packager_init(packager) abort
   "Language-aware actions, linting & fixing, autocompletion
   call a:packager.add('yegappan/lsp')
   call a:packager.add('dense-analysis/ale')
+  call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('jiangmiao/auto-pairs')
@@ -62,6 +59,7 @@ set timeoutlen=200
 "--- LSP settings ---------------------------------------------------------------------"
 "Highlights: don't use loclist (used by ALE for diags)
 let lspOptions = #{
+    \ aleSupport: v:true,
     \ autoHighlight: v:true,
     \ completionTextEdit: v:true,
     \ diagVirtualTextAlign: 'after',
@@ -103,22 +101,24 @@ nnoremap <leader>o :LspDocumentSymbol<CR>
 "Disable ALE's LSP in favour of standalone LSP plugin
 let g:ale_disable_lsp = 1
 
-"Disable showing linting errors visually - open with loclist instead
-let g:ale_set_signs = 0
-let g:ale_set_highlights = 0
-let g:ale_virtualtext_cursor = 0
+"Show linting errors with highlights
+" * Can also be viewed in the loclist with :lope
+let g:ale_set_signs = 1
+let g:ale_set_highlights = 1
+let g:ale_virtualtext_cursor = 1
+highlight ALEError ctermbg=none cterm=underline
 
-"Only lint on save due to auto-save plugin
+"Define when to lint
 let g:ale_lint_on_save = 1
+let g:ale_lint_on_insert_leave = 1
 let g:ale_lint_on_text_change = 'never'
-let g:ale_lint_on_insert_leave = 0
 
 "Set linters for individual filetypes
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
     \ 'go': ['gofmt', 'gopls', 'govet', 'gobuild'],
     \ 'proto': ['buf-lint', 'protoc-gen-lint'],
-    \ 'python': ['ruff'],
+    \ 'python': ['ruff', 'mypy', 'pylsp'],
     \ 'yaml': ['yamllint'],
 \ }
 "Specify fixers for individual filetypes
@@ -136,8 +136,8 @@ let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
 "Specify Containerfiles as Dockerfiles
 let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
-"Mapping to run fixers on file, and view lint errors
-nnoremap <leader>L :ALEFix \| :lope<CR>
+"Mapping to run fixers on file
+nnoremap <leader>L :ALEFix<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
