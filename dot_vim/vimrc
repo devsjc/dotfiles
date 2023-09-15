@@ -10,6 +10,8 @@ set number relativenumber
 set encoding=UTF-8
 set updatetime=100
 
+autocmd FileType markdown setlocal spell spelllang=en_gb
+
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
@@ -37,15 +39,16 @@ function! s:packager_init(packager) abort
       \ 'lambdalisue/fern-hijack.vim']})
   call a:packager.add('janko-m/vim-test', 
       \ {'requires': ['tpope/vim-dispatch', 'skywind3000/asyncrun.vim']})
-  "Colours and syntax highlighting
+  "Icons, Colours and syntax highlighting
   call a:packager.add('sheerun/vim-polyglot')
   call a:packager.add('sainnhe/sonokai')
+  call a:packager.add('ryanoasis/vim-devicons')
   "Misc helper plugins
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('tpope/vim-dadbod')
   call a:packager.add('kristijanhusak/vim-dadbod-ui')
-
-  call a:packager.add('ryanoasis/vim-devicons')
+  "Writing plugins
+  call a:packager.add('junegunn/goyo.vim')
 endfunction
 
 packadd vim-packager
@@ -84,7 +87,7 @@ augroup LspSetup
     au!
     au User LspAttached set completeopt-=noselect
 augroup END
-"Diasble newline on selecting completion option
+"Disable newline on selecting completion option
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 "Use LSPHover as resolver for K command in normal mode
 set keywordprg=:LspHover
