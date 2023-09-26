@@ -155,7 +155,10 @@ nnoremap <leader><Tab> <C-^><CR>
 "--- Fern Filetree settings -----------------------------------------------------------"
 let g:fern#renderer = "devicons"
 let g:fern#default_hidden = 1
-let g:fern#default_exclude = '\%(\.DS_Store\|__pycache__\|.pytest_cache\|.ruff_cache\|.git\)'
+let g:fern#default_exclude = '\%(
+      \\.git\|\.idea\|\.DS_Store
+      \\|__pycache__\|_cache\|egg-info\|build\|dist
+      \\)$'
 
 nnoremap <leader>a :Fern . -drawer -toggle<CR>
 
