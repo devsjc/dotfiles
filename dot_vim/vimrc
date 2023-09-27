@@ -7,10 +7,12 @@ syntax enable
 filetype plugin indent on
 set hlsearch incsearch ignorecase
 set number relativenumber 
+set wrap linebreak
 set encoding=UTF-8
 set updatetime=100
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
+autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 if $COLORTERM == 'truecolor'
   set termguicolors
