@@ -186,6 +186,9 @@ nnoremap <leader>tl :TestLast<CR>
 
 let test#strategy = "dispatch"
 
+let g:test#python#pytest#executable = 'python -m pytest'
+let g:test#python#pyunit#executable = 'python -m unittest'
+
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
 let g:db_ui_auto_execute_table_helpers = 1
