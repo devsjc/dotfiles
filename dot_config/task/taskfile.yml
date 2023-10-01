@@ -1,0 +1,42 @@
+version: '3'
+
+tasks:
+
+  install-binaries:
+    desc: 'Install binaries with Homebrew'
+    vars:
+      TERMINAL_TOOLS:
+        bat btop chezmoi exa fzf git jq the_silver_searcher tmux wget zsh
+      LANGUAGES:
+        go rust typst 
+      LANGUAGE_TOOLS:
+        cmake openjdk cocoapods
+      SERVICES:
+        bitwarden-cli go-task podman
+      CASK_BINARIES:
+        alt-tab android-platform-tools flutter font-jetbrains-mono-nerd-font
+        miniforge rectangle syncthing tailscale
+    cmds:
+      - brew install {{.TERMINAL_TOOLS}}
+      - brew install {{.LANGUAGES}}
+      - brew install {{.LANGUAGE_TOOLS}}
+      - brew install {{.SERVICES}}
+      - brew install --cask {{.CASK_BINARIES}}
+  
+  install-apps:
+    desc: 'Install applications with Homebrew'
+    vars:
+      MUSIC_APPS:
+        native-access plex rode-central tidal vlc
+      PRODUCTIVITY_APPS:
+        firefox jabref logi-options-plus obsidian visual-studio-code
+      MESSAGING_APPS:
+        telegram-desktop whatsapp zoom
+      GAMING_APPS:
+        discord prismlauncher steam
+    cmds:
+      - brew install --cask {{.MUSIC_APPS}}
+      - brew install --cask {{.PRODUCTIVITY_APPS}}
+      - brew install --cask {{.MESSAGING_APPS}}
+      - brew install --cask {{.GAMING_APPS}}
+
