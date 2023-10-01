@@ -79,6 +79,7 @@ let lspOptions = #{
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
 let lspServers = [
+    \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod'],  path: 'gopls', args: ['serve'] },
     \ #{ name: 'pylsp', filetype: ['py', 'python'], path: 'pylsp', args: []        },
 \ ]
@@ -121,6 +122,7 @@ let g:ale_lint_on_text_change = 'never'
 "Set linters for individual filetypes
 let g:ale_linters_explicit = 1
 let g:ale_linters = {
+    \ 'dart': ['analysis-server', 'dart-format', 'dart-analyze'],
     \ 'go': ['gofmt', 'gopls', 'govet', 'gobuild'],
     \ 'proto': ['buf-lint', 'protoc-gen-lint'],
     \ 'python': ['ruff', 'mypy', 'pylsp'],
@@ -129,6 +131,7 @@ let g:ale_linters = {
 "Specify fixers for individual filetypes
 let g:ale_fixers = {
     \ '*': ['trim_whitespace'],
+    \ 'dart': ['dart-format'],
     \ 'python': ['ruff'],
     \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
     \ 'proto': ['buf-format', 'protolint'],
