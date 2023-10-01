@@ -40,6 +40,8 @@ fi
 if [ -x "$(command -v bat)" ]; then
   alias cat="bat"
 fi
+alias dotfiles="chezmoi edit --watch --apply"
+alias gtask="task -t ${XDG_CONFIG_HOME}/task/taskfile.yml"
 
 # --- Functions -----------------------------------------------------------------------
 print_zippedzarr() {
