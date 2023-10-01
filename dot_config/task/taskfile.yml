@@ -2,6 +2,23 @@ version: '3'
 
 tasks:
 
+  install-homebrew:
+    desc: 'Installs Homebrew package manager'
+    cmds:
+      - /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+  setup-terminal:
+    desc: 'Install zsh and oh-my-zsh'
+    deps: [install-homebrew]
+    vars:
+      TASK_LOC:
+        sh: where task
+    cmds:
+      - brew install chezmoi fzf git tmux zsh
+      - sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      - git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k
+      - rm -rf {{.TASK_LOC}} && brew install go-task
+
   install-binaries:
     desc: 'Install binaries with Homebrew'
     vars:
