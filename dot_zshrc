@@ -16,7 +16,7 @@ export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="powerlevel10k/powerlevel10k"
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-plugins=( z git fzf zsh-syntax-highlighting )
+plugins=( z git fzf brew zsh-syntax-highlighting )
 
 source $ZSH/oh-my-zsh.sh
 
