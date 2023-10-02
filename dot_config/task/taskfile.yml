@@ -24,22 +24,34 @@ tasks:
     desc: 'Install binaries with Homebrew'
     vars:
       TERMINAL_TOOLS:
-        bat btop chezmoi exa fzf git jq the_silver_searcher tmux wget zsh
+        bat btop chezmoi eza fzf git jq the_silver_searcher tmux wget zsh
       LANGUAGES:
         go rust typst 
       LANGUAGE_TOOLS:
-        cmake openjdk cocoapods
+        cmake cocoapods
       SERVICES:
-        bitwarden-cli go-task podman
+        go-task
       CASK_BINARIES:
         alt-tab android-platform-tools flutter font-jetbrains-mono-nerd-font
-        miniforge rectangle syncthing tailscale
+        miniforge rectangle
     cmds:
       - brew install {{.TERMINAL_TOOLS}}
       - brew install {{.LANGUAGES}}
       - brew install {{.LANGUAGE_TOOLS}}
       - brew install {{.SERVICES}}
       - brew install --cask {{.CASK_BINARIES}}
+
+  install-home-binaries:
+    desc: 'Install binaries for home laptop'
+    deps: [install-binaries]
+    vars:
+      HOME_BINARIES:
+        bitwarden-cli podman
+      HOME_CASK_BINARIES:
+        syncthing tailscale
+    cmds:
+      - brew install {{.HOME_BINARIES}}
+      - brew install --cask {{.HOME_CASK_BINARIES}}
   
   install-apps:
     desc: 'Install applications with Homebrew'

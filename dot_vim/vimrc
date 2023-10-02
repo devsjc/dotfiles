@@ -93,10 +93,10 @@ set keywordprg=:LspHover
 "Mappings for most-used functions
 nnoremap <leader>i :LspHover<CR>
 nnoremap <leader>d :LspGotoDefinition<CR>
-nnoremap <leader>p :LspPeekDefinition<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <leader>r :LspPeekReferences<CR>
 nnoremap <leader>o :LspDocumentSymbol<CR>
+nnoremap <leader>O :LspOutline<CR>
 
 "--- ALE settings ---------------------------------------------------------------------"
 "Disable ALE's LSP in favour of standalone LSP plugin
@@ -131,8 +131,6 @@ let g:ale_fixers = {
     \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
     \ 'proto': ['buf-format', 'protolint'],
 \ }
-"Don't warn about trailing whitespace, as it is auto-fixed by '*' above
-let g:ale_warn_about_trailing_whitespace = 0
 "Show info, warnings, and errors; Write which linter produced the message
 let g:ale_lsp_show_message_severity = 'information'
 let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
@@ -144,9 +142,9 @@ nnoremap <leader>L :ALEFix<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
-nnoremap <leader>f :Lines<CR>
+nnoremap <leader>f :BLines<CR>
 nnoremap <leader>g :GFiles<CR>
-nnoremap <leader>F :Rg<CR>
+nnoremap <leader>F :Ag<CR>
 nnoremap <leader>b :Buffers<CR>
 
 "Map buffer quick switch keys
