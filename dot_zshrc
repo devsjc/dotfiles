@@ -45,12 +45,16 @@ export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 
 export EDITOR='vim'
-export GOPATH=$HOME/go
-export GOROOT="$(brew --prefix golang)/libexec"
-export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
-export JAVA_HOME=$(/usr/libexec/java_home)
-
 export HOMEBREW_AUTOREMOVE=1
+
+export GOPATH=$HOME/go
+if [ -v "$(command -v brew)" ]; then
+  export GOROOT="$(brew --prefix golang)/libexec"
+fi
+export PATH="$PATH:${GOPATH}/bin:${GOROOT}/bin"
+if [ -d "/usr/libexec/java_home" ]; then
+  export JAVA_HOME=$(/usr/libexec/java_home)
+fi
 
 # --- Aliases -------------------------------------------------------------------------
 if [ -x "$(command -v eza)" ]; then
