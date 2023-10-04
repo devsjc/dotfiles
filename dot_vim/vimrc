@@ -87,14 +87,13 @@ augroup LspSetup
 augroup END
 "Disable newline on selecting completion option
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
-"Use LSPHover as resolver for K command in normal mode
-set keywordprg=:LspHover
 
 "Mappings for most-used functions
-nnoremap <leader>i :LspHover<CR>
-nnoremap <leader>d :LspGotoDefinition<CR>
+nnoremap K :LspHover<CR>
+nnoremap gd :LspGotoDefinition<CR>
+nnoremap gr :LspShowReferences<CR>
+nnoremap gi :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
-nnoremap <leader>r :LspPeekReferences<CR>
 nnoremap <leader>o :LspDocumentSymbol<CR>
 nnoremap <leader>O :LspOutline<CR>
 
@@ -139,11 +138,12 @@ let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
 "Mapping to run fixers on file
 nnoremap <leader>L :ALEFix<CR>
+"Mapping to go te next/previous diagnostic
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
 nnoremap <leader>f :BLines<CR>
-nnoremap <leader>g :GFiles<CR>
+nnoremap <leader><leader> :GFiles<CR>
 nnoremap <leader>F :Ag<CR>
 nnoremap <leader>b :Buffers<CR>
 
@@ -169,6 +169,11 @@ let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
 
 "--- Polyglot settings ----------------------------------------------------------------"
 let g:polyglot_disabled = ['sensible']
+
+"--- GitGutter settings ---------------------------------------------------------------"
+"Make movement between hunks consistent with leader keys
+nnoremap ]h <Plug>(GitGutterNextHunk)
+nnoremap [h <Plug>(GitGutterPrevHunk)
 
 "--- Mistfly statusline settings ------------------------------------------------------"
 "Don't show the mode as it is present in statusline; always show the statusline
@@ -197,5 +202,9 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
+let g:sonokai_style = 'maia'
+let g:sonokai_better_performance = 1
+let g:sonokai_disable_italic_comment = 1
+
 colorscheme sonokai
 
