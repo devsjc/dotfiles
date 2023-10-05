@@ -138,7 +138,9 @@ let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
 "Mapping to run fixers on file
 nnoremap <leader>L :ALEFix<CR>
-"Mapping to go te next/previous diagnostic
+"Mapping to go to next/previous diagnostic
+nnoremap ]e :ALENextWrap<CR>
+nnoremap [e :ALEPreviousWrap<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
