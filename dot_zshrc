@@ -1,0 +1,68 @@
+# Preferred terminal settings:
+# Font: 
+#   JetBrainsMono Nerd Font (brew install font-jetbrains-mono-nerd-font)
+#   Size 13, Line Spacing 120%
+# Window:
+# Transparency 19%, Blur 5%
+
+# Get path to shared binaries based on OS
+if [[ "$(uname)" = "Darwin" ]]; then
+  export SBINS_HOME="/opt/homebrew/share"
+elif [[ "$(expr substr $(uname -s) 1 5)" == "Linux" ]]; then
+  export SBINS_HOME="/bin"
+fi
+
+#=== ZSH SETTINGS ====================================================================
+
+# Enable autocompletion
+autoload -Uz compinit
+compinit
+
+function source_remote() {
+  if [[ ! -f "$1" ]]; then
+    curl -s "$2" > "$1"
+  fi
+  source "$1"
+  rm "$1"
+} 
+
+#=== PLUGINS =========================================================================
+
+#--- FZF settings --------------------------------------------------------------------
+# Enable fzf binary, keybindings and auto-completion
+[[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+
+#--- ZSH Syntax Highlighting ---------------------------------------------------------
+# Enable syntax highlighting
+if [[ -r $SBINS_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
+  source $SBINS_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+fi
+
+#--- Powerlevel10k -------------------------------------------------------------------
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+# Source Powerlevel10k
+if [[ -r $SBINS_HOME/powerlevel10k/powerlevel10k.zsh-theme ]]; then
+  source $SBINS_HOME/powerlevel10k/powerlevel10k.zsh-theme
+fi
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+#--- Git -----------------------------------------------------------------------------
+source_remote "/tmp/git-plugin.zsh" "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/git/git.plugin.zsh"
+
+#=== USER CONFIGURATION ==============================================================
+
+#--- Aliases -------------------------------------------------------------------------
+if [[ -x "$(command -v bat)" ]]; then
+  alias cat="bat"
+fi
+if [[ -x "$(command -v eza)" ]]; then
+  alias ls="eza"
+  alias la="eza --long --all --group --git --git-repos"
+fi
+

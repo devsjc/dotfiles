@@ -205,7 +205,7 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
-let g:sonokai_style = 'maia'
+let g:sonokai_style = 'default'
 let g:sonokai_better_performance = 1
 let g:sonokai_disable_italic_comment = 1
 
