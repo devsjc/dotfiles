@@ -65,4 +65,8 @@ if [[ -x "$(command -v eza)" ]]; then
   alias ls="eza"
   alias la="eza --long --all --group --git --git-repos"
 fi
+if [[ -x "$(command -v chezmoi)" ]]; then
+  alias dots="chezmoi edit --watch --apply"
+  alias dotscam="chezmoi git add . && chezmoi git commit"
+fi
 
