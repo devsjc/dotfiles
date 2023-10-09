@@ -32,6 +32,11 @@ function source_remote() {
 # Enable fzf binary, keybindings and auto-completion
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
 
+#--- ZSH-Z ---------------------------------------------------------------------------
+source_remote \
+  "/tmp/zsh-z-plugin.zsh" \
+  "https://raw.githubusercontent.com/agkozak/zsh-z/master/zsh-z.plugin.zsh"
+
 #--- ZSH Syntax Highlighting ---------------------------------------------------------
 # Enable syntax highlighting
 if [[ -r $SBINS_HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh ]]; then
@@ -53,7 +58,9 @@ fi
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 #--- Git -----------------------------------------------------------------------------
-source_remote "/tmp/git-plugin.zsh" "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/git/git.plugin.zsh"
+source_remote \
+  "/tmp/git-plugin.zsh" \
+  "https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/git/git.plugin.zsh"
 
 #=== USER CONFIGURATION ==============================================================
 
