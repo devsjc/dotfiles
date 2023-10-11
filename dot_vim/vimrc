@@ -34,7 +34,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
-  call a:packager.add('jiangmiao/auto-pairs')
+  call a:packager.add('LunarWatcher/auto-pairs')
   call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
   call a:packager.add('lambdalisue/fern.vim', {'requires': ['lambdalisue/fern-git-status.vim','lambdalisue/fern-renderer-devicons.vim', 'lambdalisue/fern-hijack.vim']})
   call a:packager.add('janko-m/vim-test', {'requires': 'skywind3000/asyncrun.vim'})
@@ -136,6 +136,11 @@ let g:ale_lsp_show_message_severity = 'information'
 let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
 "Specify Containerfiles as Dockerfiles
 let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+
+"Set levels of linters 
+let g:ale_type_map = {
+      \ 'ruff': {'E': 'WS'}, 
+   \ }
 
 "Mapping to run fixers on file
 nnoremap <leader>L :ALEFix<CR>
