@@ -107,7 +107,13 @@ let g:ale_disable_lsp = 1
 let g:ale_set_signs = 1
 let g:ale_set_highlights = 1
 let g:ale_virtualtext_cursor = 1
-highlight ALEError ctermbg=none cterm=underline
+"Change highlight style when color scheme is sourced
+" * Has to be done in autogroup otherwise colorscheme overwrites
+augroup ALEHighlights
+    autocmd!
+    autocmd ColorScheme * highlight link ALEError ErrorMsg
+augroup END
+
 
 "Define when to lint
 let g:ale_lint_on_save = 1
@@ -122,6 +128,7 @@ let g:ale_linters = {
     \ 'proto': ['buf-lint', 'protoc-gen-lint'],
     \ 'python': ['ruff', 'mypy', 'pylsp'],
     \ 'yaml': ['yamllint'],
+    \ 'vim': ['vint'],
 \ }
 "Specify fixers for individual filetypes
 let g:ale_fixers = {
@@ -188,12 +195,12 @@ nnoremap [h <Plug>(GitGutterPrevHunk)
 set noshowmode laststatus=2
 
 "--- Vim Test settings ----------------------------------------------------------------"
-nnoremap <leader>tn :TestNearest<CR>
-nnoremap <leader>tf :TestFile<CR>
-nnoremap <leader>ts :TestSuite<CR>
-nnoremap <leader>tl :TestLast<CR>
+nnoremap <leader>tn :TestNearest \| cope<CR>
+nnoremap <leader>tf :TestFile \| cope<CR>
+nnoremap <leader>ts :TestSuite \| cope<CR>
+nnoremap <leader>tl :TestLast \| cope<CR>
 
-let test#strategy = "dispatch"
+let test#strategy = "asyncrun"
 
 let g:test#python#pytest#executable = 'python -m pytest'
 let g:test#python#pyunit#executable = 'python -m unittest'
