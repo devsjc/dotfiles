@@ -5,6 +5,7 @@ source $VIMRUNTIME/defaults.vim
 
 syntax enable
 filetype plugin indent on
+set tabstop=4 shiftwidth=4 expandtab
 set hlsearch incsearch ignorecase
 set number relativenumber 
 set wrap linebreak
@@ -20,6 +21,11 @@ endif
 
 let mapleader="\<space>"
 
+function! SynGroup()
+    let l:s = synID(line('.'), col('.'), 1)
+    echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+endfun
+
 "=== PLUGINS =========================================================================="
 
 function! s:packager_init(packager) abort
@@ -32,6 +38,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('dense-analysis/ale')
   call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ', 'rafamadriz/friendly-snippets']})
   call a:packager.add('github/copilot.vim')
+  call a:packager.add('joerdav/templ.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('LunarWatcher/auto-pairs')
@@ -41,9 +48,9 @@ function! s:packager_init(packager) abort
   call a:packager.add('ap/vim-css-color')
   "Icons, Colours and syntax highlighting
   call a:packager.add('sheerun/vim-polyglot')
-  call a:packager.add('sainnhe/sonokai')
   call a:packager.add('ryanoasis/vim-devicons')
   "Misc helper plugins
+  call a:packager.add('tpope/vim-fugitive')
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('tpope/vim-dadbod')
   call a:packager.add('kristijanhusak/vim-dadbod-ui')
@@ -165,6 +172,14 @@ nnoremap <leader>b :Buffers<CR>
 "Map buffer quick switch keys
 nnoremap <leader><Tab> <C-^><CR>
 
+"--- Fugitive settings ----------------------------------------------------------------"
+nnoremap <leader>ga :Gwrite<CR>
+nnoremap <leader>gc :Git commit<CR>
+nnoremap <leader>gd :Git diff --minimal<CR>
+nnoremap <leader>gs :Git<CR>
+nnoremap <leader>gl :Git log --graph --oneline --decorate<CR>
+nnoremap <leader>gp :Git push<CR>
+
 "--- Fern Filetree settings -----------------------------------------------------------"
 let g:fern#renderer = "devicons"
 let g:fern#default_hidden = 1
@@ -185,6 +200,11 @@ let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
 "--- Polyglot settings ----------------------------------------------------------------"
 let g:polyglot_disabled = ['sensible']
 
+" Go settings
+let g:go_highlight_generate_tags = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_extra_types = 1
+
 "--- GitGutter settings ---------------------------------------------------------------"
 "Make movement between hunks consistent with leader keys
 nnoremap ]h <Plug>(GitGutterNextHunk)
@@ -204,6 +224,7 @@ let test#strategy = "asyncrun"
 
 let g:test#python#pytest#executable = 'python -m pytest'
 let g:test#python#pyunit#executable = 'python -m unittest'
+let g:test#go#gotest#executable = 'go test -v'
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
@@ -217,9 +238,5 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
-let g:sonokai_style = 'default'
-let g:sonokai_better_performance = 1
-let g:sonokai_disable_italic_comment = 1
-
-colorscheme sonokai
+colorscheme jb
 

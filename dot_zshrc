@@ -84,6 +84,14 @@ if [[ -x "$(command -v chezmoi)" ]]; then
   alias dotscam="chezmoi git add . && chezmoi git commit"
 fi
 
+#--- Functions -----------------------------------------------------------------------
+zzarr_ls() {
+  python -c "exec(\"\\nimport ocf_blosc2\\nimport xarray as xr\\nimport zarr\\nds = xr.open_zarr('zip::$1').compute()\\nprint(ds)\\n\")";
+}
+zarr_ls() {
+  python -c "exec(\"\\nimport ocf_blosc2\\nimport xarray as xr\\nimport zarr\\nds = xr.open_zarr('$1').compute()\\nprint(ds)\\n\")";
+}
+
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
 __conda_setup="$('/opt/homebrew/Caskroom/miniforge/base/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
