@@ -38,7 +38,6 @@ function! s:packager_init(packager) abort
   call a:packager.add('dense-analysis/ale')
   call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ', 'rafamadriz/friendly-snippets']})
   call a:packager.add('github/copilot.vim')
-  call a:packager.add('joerdav/templ.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('LunarWatcher/auto-pairs')
@@ -47,13 +46,12 @@ function! s:packager_init(packager) abort
   call a:packager.add('janko-m/vim-test', {'requires': 'skywind3000/asyncrun.vim'})
   call a:packager.add('ap/vim-css-color')
   "Icons, Colours and syntax highlighting
-  call a:packager.add('sheerun/vim-polyglot')
+  call a:packager.add('devsjc/vim-jb', {'requires': ['sheerun/vim-polyglot']})
   call a:packager.add('ryanoasis/vim-devicons')
   "Misc helper plugins
   call a:packager.add('tpope/vim-fugitive')
   call a:packager.add('liuchengxu/vim-which-key')
-  call a:packager.add('tpope/vim-dadbod')
-  call a:packager.add('kristijanhusak/vim-dadbod-ui')
+  call a:packager.add('kristijanhusak/vim-dadbod-ui', {'requires': ['tpope/vim-dadbod']})
   "Writing plugins
   call a:packager.add('junegunn/goyo.vim')
 endfunction
@@ -238,5 +236,6 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
+let g:jb_style='mid'
 colorscheme jb
 
