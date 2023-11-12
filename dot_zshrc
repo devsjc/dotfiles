@@ -14,7 +14,13 @@ fi
 
 #=== ZSH SETTINGS ====================================================================
 
-# Enable autocompletion
+# If brew exists, enable its autocompletion
+if type brew &>/dev/null
+then
+  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+fi
+
+# Enab;e autocompletion
 autoload -Uz compinit
 compinit
 
