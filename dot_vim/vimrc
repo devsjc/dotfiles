@@ -5,7 +5,7 @@ source $VIMRUNTIME/defaults.vim
 
 syntax enable
 filetype plugin indent on
-set tabstop=4 shiftwidth=4 expandtab
+set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
 set hlsearch incsearch ignorecase
 set number relativenumber 
 set wrap linebreak
@@ -14,12 +14,16 @@ set updatetime=100
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType terraform setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
 
 let mapleader="\<space>"
+
+nnoremap <expr> n (v:searchforward ? 'n' : 'N')
+nnoremap <expr> N (v:searchforward ? 'N' : 'n')
 
 function! SynGroup()
     let l:s = synID(line('.'), col('.'), 1)
@@ -31,10 +35,16 @@ endfun
 function! s:packager_init(packager) abort
   call a:packager.add('kristijanhusak/vim-packager', {'type': 'opt'})
   "Navigation and search
-  call a:packager.add('junegunn/fzf', { 'do': './install --all && ln -s $(pwd) ~/.fzf'})
-  call a:packager.add('junegunn/fzf.vim')
+  call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
   "Language-aware actions, linting & fixing, autocompletion
-  call a:packager.add('yegappan/lsp')
+  call a:packager.add('yegappan/lsp', {'do': 
+    \ 'go install golang.org/x/tools/gopls@latest && ' +
+    \ 'conda install -y python-language-server && ' +
+    \ 'npm install -g dart-language-server && ' +
+    \ 'npm install -g vim-language-server && ' +
+    \ 'npm install -g typescript typescript-language-server && ' +
+    \ 'brew install terraform-ls'
+    \ })
   call a:packager.add('dense-analysis/ale')
   call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ', 'rafamadriz/friendly-snippets']})
   call a:packager.add('github/copilot.vim')
@@ -82,7 +92,11 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 let lspServers = [
     \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['stdio'] },
+    \ #{ name: 'ruff', filetype: ['py', 'python'], path: 'ruff-lsp', args: [] },
     \ #{ name: 'pylsp', filetype: ['py', 'python'], path: 'pylsp', args: [] },
+    \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
+    \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
 \ ]
 autocmd VimEnter * call LspAddServer(lspServers)
 
@@ -119,14 +133,10 @@ augroup ALEHighlights
     autocmd ColorScheme * highlight link ALEError ErrorMsg
 augroup END
 
-
-"Define when to lint
-let g:ale_lint_on_save = 1
-let g:ale_lint_on_insert_leave = 1
+"Define when to lint, defaults to on save
 let g:ale_lint_on_text_change = 'never'
 
 "Set linters for individual filetypes
-let g:ale_linters_explicit = 1
 let g:ale_linters = {
     \ 'dart': ['analysis-server', 'dart-format', 'dart-analyze'],
     \ 'go': ['gofmt', 'gopls', 'govet', 'gobuild'],
@@ -150,9 +160,7 @@ let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
 let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
 "Set levels of linters 
-let g:ale_type_map = {
-      \ 'ruff': {'E': 'WS'}, 
-   \ }
+let g:ale_type_map = { 'ruff': {'E': 'WS'} }
 
 "Mapping to run fixers on file
 nnoremap <leader>L :ALEFix<CR>
@@ -177,6 +185,7 @@ nnoremap <leader>gd :Git diff --minimal<CR>
 nnoremap <leader>gs :Git<CR>
 nnoremap <leader>gl :Git log --graph --oneline --decorate<CR>
 nnoremap <leader>gp :Git push<CR>
+nnoremap <leader>gh :0Gclog<CR>
 
 "--- Fern Filetree settings -----------------------------------------------------------"
 let g:fern#renderer = "devicons"
