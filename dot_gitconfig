@@ -1,0 +1,17 @@
+# This is Git's per-user configuration file.
+[user]
+	name = devsjc
+	email = 47188100+devsjc@users.noreply.github.com
+[push]
+	autoSetupRemote = true
+[alias]
+	prune-all = !git remote | xargs -n 1 git remote prune
+	cam = commit -am
+	co = checkout
+	cb = checkout -b
+	tl = tag --sort=-v:refname -n --list
+	lol = log --graph --decorate --pretty=oneline --abbrev-commit
+	lols = log --graph --stat
+	lola = log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all
+[init]
+	defaultBranch = main
