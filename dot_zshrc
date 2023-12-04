@@ -77,11 +77,6 @@ export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export EDITOR='vim'
 export HOMEBREW_AUTOREMOVE=1
 
-if [[ -d "${HOME}/go" ]]; then
-  export GOROOT=$HOME/go
-  export PATH=$PATH:$GOROOT/bin
-fi
-
 #--- Aliases -------------------------------------------------------------------------
 if [[ -x "$(command -v bat)" ]]; then
   alias cat="bat"

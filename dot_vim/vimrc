@@ -92,7 +92,7 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 let lspServers = [
     \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
-    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['stdio'] },
+    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
     \ #{ name: 'ruff', filetype: ['py', 'python'], path: 'ruff-lsp', args: [] },
     \ #{ name: 'pylsp', filetype: ['py', 'python'], path: 'pylsp', args: [] },
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
@@ -149,7 +149,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
     \ '*': ['trim_whitespace'],
     \ 'dart': ['dart-format'],
-    \ 'python': ['ruff'],
+    \ 'python': ['ruff_format'],
     \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
     \ 'proto': ['buf-format', 'protolint'],
 \ }
