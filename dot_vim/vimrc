@@ -109,13 +109,13 @@ augroup END
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 
 "Mappings for most-used functions
-nnoremap K :LspHover<CR>
-nnoremap gd :LspGotoDefinition<CR>
-nnoremap gr :LspShowReferences<CR>
-nnoremap gi :LspGotoImplementation<CR>
+nnoremap <leader>d :LspGotoDefinition<CR>
+nnoremap <leader>r :LspShowReferences<CR>
+nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <leader>o :LspDocumentSymbol<CR>
 nnoremap <leader>O :LspOutline<CR>
+nnoremap <leader>K :LspHover<CR>
 
 "--- ALE settings ---------------------------------------------------------------------"
 "Disable ALE's LSP in favour of standalone LSP plugin
@@ -149,7 +149,7 @@ let g:ale_linters = {
 let g:ale_fixers = {
     \ '*': ['trim_whitespace'],
     \ 'dart': ['dart-format'],
-    \ 'python': ['ruff_format'],
+    \ 'python': ['ruff_format', 'ruff'],
     \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
     \ 'proto': ['buf-format', 'protolint'],
 \ }
@@ -229,8 +229,8 @@ nnoremap <leader>tl :TestLast \| cope<CR>
 
 let test#strategy = "asyncrun"
 
-let g:test#python#pytest#executable = 'python -m pytest'
-let g:test#python#pyunit#executable = 'python -m unittest'
+let g:test#python#pytest#executable = 'python -m pytest -rA'
+let g:test#python#pyunit#executable = 'python -m unittest --buffer'
 let g:test#go#gotest#executable = 'go test -v'
 
 "--- DadBod Settings ------------------------------------------------------------------"
