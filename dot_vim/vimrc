@@ -44,15 +44,17 @@ function! s:packager_init(packager) abort
     \ 'npm install -g vim-language-server && ' +
     \ 'npm install -g typescript typescript-language-server && ' +
     \ 'npm install -g vscode-langservers-extracted && ' +
-    \ 'brew install terraform-ls'
+    \ 'brew install terraform-ls marksman'
     \ })
-  call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ', 'rafamadriz/friendly-snippets']})
+  call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ']})
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('LunarWatcher/auto-pairs')
   call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
-  call a:packager.add('lambdalisue/fern.vim', {'requires': ['lambdalisue/fern-git-status.vim','lambdalisue/fern-renderer-devicons.vim', 'lambdalisue/fern-hijack.vim']})
+  call a:packager.add('lambdalisue/fern.vim', {'requires': 
+    \ ['lambdalisue/fern-git-status.vim','lambdalisue/fern-renderer-devicons.vim', 'lambdalisue/fern-hijack.vim']
+    \ })
   call a:packager.add('janko-m/vim-test', {'requires': 'skywind3000/asyncrun.vim'})
   call a:packager.add('ap/vim-css-color')
   "Icons, Colours and syntax highlighting
@@ -101,7 +103,7 @@ let lspServers = [
     \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
     \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
-    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'vscode-markdown-language-server', args: ['--stdio'] },
+    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
     \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
 \ ]
 autocmd VimEnter * call LspAddServer(lspServers)
@@ -146,6 +148,9 @@ nnoremap <leader>gl :Git log --graph --oneline --decorate<CR>
 nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gh :0Gclog<CR>
 
+"--- AutoPairs settings ---------------------------------------------------------------"
+let g:AutoPairsCompleteOnlyOnSpace = 1
+
 "--- Fern Filetree settings -----------------------------------------------------------"
 let g:fern#renderer = "devicons"
 let g:fern#default_hidden = 1
@@ -166,13 +171,19 @@ let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
 "--- Polyglot settings ----------------------------------------------------------------"
 let g:polyglot_disabled = ['sensible']
 
-" Go settings
+"--- Go settings ----------------------------------------------------------------------"
 let g:go_highlight_generate_tags = 1
 let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
 
 "--- GitGutter settings ---------------------------------------------------------------"
-"Make movement between hunks consistent with leader keys
+let g:gitgutter_sign_added = '┃'
+let g:gitgutter_sign_modified = '┃'
+let g:gitgutter_sign_removed = '┃'
+let g:gitgutter_sign_removed_first_line = '┓'
+let g:gitgutter_sign_removed_above_and_below = '╏'
+let g:gitgutter_sign_modified_removed = '┨'
+
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 
@@ -191,6 +202,9 @@ let test#strategy = "asyncrun"
 let g:test#python#pytest#executable = 'python -m pytest -rA'
 let g:test#python#pyunit#executable = 'python -m unittest --buffer'
 let g:test#go#gotest#executable = 'go test -v'
+
+"--- VSnip settings -------------------------------------------------------------------"
+let g:vsnip_snippet_dir = expand('~/.vim/snippets')
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
