@@ -39,13 +39,13 @@ function! s:packager_init(packager) abort
   "Language-aware actions, linting & fixing, autocompletion
   call a:packager.add('yegappan/lsp', {'do': 
     \ 'go install golang.org/x/tools/gopls@latest && ' +
-    \ 'conda install -y python-language-server && ' +
+    \ 'conda install -n base -y python-lsp-server pylsp-mypy ruff-lsp && ' +
     \ 'npm install -g dart-language-server && ' +
     \ 'npm install -g vim-language-server && ' +
     \ 'npm install -g typescript typescript-language-server && ' +
+    \ 'npm install -g vscode-langservers-extracted && ' +
     \ 'brew install terraform-ls'
     \ })
-  call a:packager.add('dense-analysis/ale')
   call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ', 'rafamadriz/friendly-snippets']})
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
@@ -62,8 +62,6 @@ function! s:packager_init(packager) abort
   call a:packager.add('tpope/vim-fugitive')
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('kristijanhusak/vim-dadbod-ui', {'requires': ['tpope/vim-dadbod']})
-  "Writing plugins
-  call a:packager.add('junegunn/goyo.vim')
 endfunction
 
 packadd vim-packager
@@ -75,27 +73,35 @@ nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 set timeoutlen=200
 
 "--- LSP settings ---------------------------------------------------------------------"
-"Highlights: don't use loclist (used by ALE for diags)
 let lspOptions = #{
-    \ aleSupport: v:true,
     \ autoHighlight: v:true,
     \ completionTextEdit: v:false,
     \ noNewlineInCompletion: v:true,
     \ outlineOnRight: v:true,
     \ outlineWinSize: 70,
-    \ showInlayHints: v:true,
+    \ showInlayHints: v:false,
     \ vsnipSupport: v:true,
-    \ useQuickfixForLocations: v:true,
     \ }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
+
+let yamlWorkspaceConfig = #{
+    \ completion: v:true,
+    \ validate: v:true,
+    \ schemaStore: #{
+        \ enable: v:true,
+        \ url: 'https://www.schemastore.org/api/json/catalog.json',
+        \ },
+    \ }
 
 let lspServers = [
     \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
     \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-    \ #{ name: 'ruff', filetype: ['py', 'python'], path: 'ruff-lsp', args: [] },
-    \ #{ name: 'pylsp', filetype: ['py', 'python'], path: 'pylsp', args: [] },
+    \ #{ name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [] },
+    \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
+    \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
+    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'vscode-markdown-language-server', args: ['--stdio'] },
     \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
 \ ]
 autocmd VimEnter * call LspAddServer(lspServers)
@@ -115,58 +121,11 @@ nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <leader>o :LspDocumentSymbol<CR>
 nnoremap <leader>O :LspOutline<CR>
-nnoremap <leader>K :LspHover<CR>
+nnoremap <leader>K :LspPeekDefinition<CR>
+nnoremap <leader>L :LspFormat<CR>
 
-"--- ALE settings ---------------------------------------------------------------------"
-"Disable ALE's LSP in favour of standalone LSP plugin
-let g:ale_disable_lsp = 1
-
-"Show linting errors with highlights
-" * Can also be viewed in the loclist with :lope
-let g:ale_set_signs = 1
-let g:ale_set_highlights = 1
-let g:ale_virtualtext_cursor = 1
-"Change highlight style when color scheme is sourced
-" * Has to be done in autogroup otherwise colorscheme overwrites
-augroup ALEHighlights
-    autocmd!
-    autocmd ColorScheme * highlight link ALEError ErrorMsg
-augroup END
-
-"Define when to lint, defaults to on save
-let g:ale_lint_on_text_change = 'never'
-
-"Set linters for individual filetypes
-let g:ale_linters = {
-    \ 'dart': ['analysis-server', 'dart-format', 'dart-analyze'],
-    \ 'go': ['gofmt', 'gopls', 'govet', 'gobuild'],
-    \ 'proto': ['buf-lint', 'protoc-gen-lint'],
-    \ 'python': ['ruff', 'mypy', 'pylsp'],
-    \ 'yaml': ['yamllint'],
-    \ 'vim': ['vint'],
-\ }
-"Specify fixers for individual filetypes
-let g:ale_fixers = {
-    \ '*': ['trim_whitespace'],
-    \ 'dart': ['dart-format'],
-    \ 'python': ['ruff_format', 'ruff'],
-    \ 'go': ['gopls', 'goimports', 'gofmt', 'gotype', 'govet'],
-    \ 'proto': ['buf-format', 'protolint'],
-\ }
-"Show info, warnings, and errors; Write which linter produced the message
-let g:ale_lsp_show_message_severity = 'information'
-let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
-"Specify Containerfiles as Dockerfiles
-let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
-
-"Set levels of linters 
-let g:ale_type_map = { 'ruff': {'E': 'WS'} }
-
-"Mapping to run fixers on file
-nnoremap <leader>L :ALEFix<CR>
-"Mapping to go to next/previous diagnostic
-nnoremap ]e :ALENextWrap<CR>
-nnoremap [e :ALEPreviousWrap<CR>
+nnoremap ]e :LspDiag next<CR>
+nnoremap [e :LspDiag prev<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
