@@ -205,6 +205,8 @@ let g:test#go#gotest#executable = 'go test -v'
 
 "--- VSnip settings -------------------------------------------------------------------"
 let g:vsnip_snippet_dir = expand('~/.vim/snippets')
+imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
+imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
