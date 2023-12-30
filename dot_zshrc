@@ -110,6 +110,8 @@ export HOMEBREW_AUTOREMOVE=1
 #--- Aliases -------------------------------------------------------------------------
 if [[ -x "$(command -v bat)" ]]; then
   alias cat="bat"
+elif [[ -x "$(command -v batcat)" ]]; then
+  alias cat="batcat"
 fi
 if [[ -x "$(command -v eza)" ]]; then
   alias ls="eza"
