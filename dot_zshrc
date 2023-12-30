@@ -76,6 +76,8 @@ fi
 
 # Enable fzf binary, keybindings and auto-completion
 [[ -f ~/.fzf.zsh ]] && source ~/.fzf.zsh
+[[ -f /usr/share/doc/fzf/examples/key-bindings.zsh ]] && source /usr/share/doc/fzf/examples/key-bindings.zsh
+[[ -f /usr/share/doc/fzf/examples/completion.zsh ]] && source /usr/share/doc/fzf/examples/completion.zsh
 
 # Set the default command to use fd
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
@@ -108,7 +110,7 @@ export EDITOR='vim'
 export HOMEBREW_AUTOREMOVE=1
 
 #--- Aliases -------------------------------------------------------------------------
-if [[ -x "$(command -v bat)" ]]; then
+[[ -x "$(command -v bat)" ]]; then
   alias cat="bat"
 elif [[ -x "$(command -v batcat)" ]]; then
   alias cat="batcat"
