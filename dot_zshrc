@@ -110,7 +110,7 @@ export EDITOR='vim'
 export HOMEBREW_AUTOREMOVE=1
 
 #--- Aliases -------------------------------------------------------------------------
-[[ -x "$(command -v bat)" ]]; then
+if [[ -x "$(command -v bat)" ]]; then
   alias cat="bat"
 elif [[ -x "$(command -v batcat)" ]]; then
   alias cat="batcat"
