@@ -37,29 +37,23 @@ function! s:packager_init(packager) abort
   "Navigation and search
   call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
   "Language-aware actions, linting & fixing, autocompletion
-  call a:packager.add('yegappan/lsp', {'do': 
-    \ 'go install golang.org/x/tools/gopls@latest && ' +
-    \ 'conda install -n base -y python-lsp-server pylsp-mypy ruff-lsp && ' +
-    \ 'npm install -g dart-language-server && ' +
-    \ 'npm install -g vim-language-server && ' +
-    \ 'npm install -g typescript typescript-language-server && ' +
-    \ 'npm install -g vscode-langservers-extracted && ' +
-    \ 'brew install terraform-ls marksman'
-    \ })
-  call a:packager.add('hrsh7th/vim-vsnip', {'requires': ['hrsh7th/vim-vsnip-integ']})
+  call a:packager.add('yegappan/lsp') 
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('LunarWatcher/auto-pairs')
-  call a:packager.add('bluz71/vim-mistfly-statusline', {'requires': 'airblade/vim-gitgutter'})
-  call a:packager.add('lambdalisue/fern.vim', {'requires': 
-    \ ['lambdalisue/fern-git-status.vim','lambdalisue/fern-renderer-devicons.vim', 'lambdalisue/fern-hijack.vim']
-    \ })
+  call a:packager.add('airblade/vim-gitgutter')
+  call a:packager.add('itchyny/lightline.vim')
+  call a:packager.add('lambdalisue/fern.vim', {'requires': [
+      \ 'lambdalisue/fern-git-status.vim',
+      \ 'lambdalisue/fern-renderer-nerdfont.vim',
+      \ 'lambdalisue/fern-hijack.vim'
+      \ ]})
   call a:packager.add('janko-m/vim-test', {'requires': 'skywind3000/asyncrun.vim'})
   call a:packager.add('ap/vim-css-color')
   "Icons, Colours and syntax highlighting
   call a:packager.add('devsjc/vim-jb', {'requires': ['sheerun/vim-polyglot']})
-  call a:packager.add('ryanoasis/vim-devicons')
+  call a:packager.add('lambdalisue/nerdfont.vim')
   "Misc helper plugins
   call a:packager.add('tpope/vim-fugitive')
   call a:packager.add('liuchengxu/vim-which-key')
@@ -77,12 +71,16 @@ set timeoutlen=200
 "--- LSP settings ---------------------------------------------------------------------"
 let lspOptions = #{
     \ autoHighlight: v:true,
-    \ completionTextEdit: v:false,
+    \ autoPopulateDiags: v:true,
+    \ diagVirtualTextAlign: 'after',
     \ noNewlineInCompletion: v:true,
     \ outlineOnRight: v:true,
     \ outlineWinSize: 70,
-    \ showInlayHints: v:false,
-    \ vsnipSupport: v:true,
+    \ semanticHighlight: v:true,
+    \ showDiagInBaloon: v:false,
+    \ showDiagWithVirtualText: v:true,
+    \ showInlayHints: v:true,
+    \ showSignature: v:true,
     \ }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
@@ -94,7 +92,14 @@ let yamlWorkspaceConfig = #{
         \ url: 'https://www.schemastore.org/api/json/catalog.json',
         \ },
     \ }
-
+"Install LSP servers via:
+" go install golang.org/x/tools/gopls@latest
+" python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
+" npm install -g dart-language-server
+" npm install -g vim-language-server
+" npm install -g typescript typescript-language-server
+" npm install -g vscode-langservers-extracted
+" brew install terraform-ls marksman
 let lspServers = [
     \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
@@ -116,6 +121,9 @@ augroup END
 "Disable newline on selecting completion option
 inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 
+"Link inlay hints to the conceal group
+highlight link LspInlayHint Conceal
+
 "Mappings for most-used functions
 nnoremap <leader>d :LspGotoDefinition<CR>
 nnoremap <leader>r :LspShowReferences<CR>
@@ -125,7 +133,6 @@ nnoremap <leader>o :LspDocumentSymbol<CR>
 nnoremap <leader>O :LspOutline<CR>
 nnoremap <leader>K :LspPeekDefinition<CR>
 nnoremap <leader>L :LspFormat<CR>
-
 nnoremap ]e :LspDiag next<CR>
 nnoremap [e :LspDiag prev<CR>
 
@@ -152,7 +159,7 @@ nnoremap <leader>gh :0Gclog<CR>
 let g:AutoPairsCompleteOnlyOnSpace = 1
 
 "--- Fern Filetree settings -----------------------------------------------------------"
-let g:fern#renderer = "devicons"
+let g:fern#renderer = "nerdfont"
 let g:fern#default_hidden = 1
 let g:fern#default_exclude = '\%(
       \\.git\|\.idea\|\.DS_Store
@@ -163,7 +170,6 @@ nnoremap <leader>a :Fern . -drawer -toggle<CR>
 
 "--- AutoSave settings ----------------------------------------------------------------"
 set noswapfile
-
 let g:auto_save = 1
 let g:auto_save_silent = 1
 let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
@@ -187,9 +193,50 @@ let g:gitgutter_sign_modified_removed = '┨'
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 
-"--- Mistfly statusline settings ------------------------------------------------------"
+"--- Lightline settings ------------------------------------------------------"
 "Don't show the mode as it is present in statusline; always show the statusline
 set noshowmode laststatus=2
+
+function! StatusbarFilename()
+  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
+  let modified = &modified ? ' *' : ''
+  let icon = nerdfont#find(filename)
+  return icon . ' ' . filename . modified
+endfunction
+
+function StatusbarGitBranch()
+  let branch = FugitiveHead()
+  return branch !=# '' ? ' ' . branch : ''
+endfunction
+
+function StatusbarGitDiff()
+  if exists('g:loaded_gitgutter') && get(g:, 'gitgutter_enabled')
+    let [l:added, l:changed, l:removed] = GitGutterGetHunkSummary()
+    return '+' . l:added . ' ~' . l:changed . ' -' . l:removed
+  endif
+endfunction
+
+function! StatusbarDiagnostics()
+  let diags = lsp#lsp#ErrorCount()
+  let errs = 'E' . diags.Error
+  let warns = 'W' . diags.Warn
+  return errs . ' ' . warns
+endfunction
+
+let g:lightline = {
+      \ 'colorscheme': 'wombat',
+      \ 'active': {
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'filename' ], 
+      \             [ 'gitbranch', 'gitdiff', 'diagnostics' ] ]
+      \ },
+      \ 'component_function': {
+      \   'filename': 'StatusbarFilename',
+      \   'gitbranch': 'StatusbarGitBranch',
+      \   'gitdiff': 'StatusbarGitDiff',
+      \   'diagnostics': 'StatusbarDiagnostics',
+      \ },
+      \ }
 
 "--- Vim Test settings ----------------------------------------------------------------"
 nnoremap <leader>tn :TestNearest \| cope<CR>
@@ -202,11 +249,6 @@ let test#strategy = "asyncrun"
 let g:test#python#pytest#executable = 'python -m pytest -rA'
 let g:test#python#pyunit#executable = 'python -m unittest --buffer'
 let g:test#go#gotest#executable = 'go test -v'
-
-"--- VSnip settings -------------------------------------------------------------------"
-let g:vsnip_snippet_dir = expand('~/.vim/snippets')
-imap <expr> <Tab>   vsnip#jumpable(1)  ? '<Plug>(vsnip-jump-next)' : '<Tab>'
-imap <expr> <S-Tab> vsnip#jumpable(-1) ? '<Plug>(vsnip-jump-prev)' : '<S-Tab>'
 
 "--- DadBod Settings ------------------------------------------------------------------"
 let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
