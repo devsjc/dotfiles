@@ -128,6 +128,7 @@ if [[ -x "$(command -v chezmoi)" ]]; then
   alias dots="chezmoi edit --watch --apply"
   alias dotscam="chezmoi git add . && chezmoi git commit"
 fi
+alias dy="dig +short @dns.toys"
 
 #--- Functions -----------------------------------------------------------------------
 zzarr_ls() {
