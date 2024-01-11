@@ -11,6 +11,7 @@ set number relativenumber
 set wrap linebreak
 set encoding=UTF-8
 set updatetime=100
+set makeproj=task
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
