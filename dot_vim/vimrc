@@ -38,6 +38,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
   "Language-aware actions, linting & fixing, autocompletion
   call a:packager.add('yegappan/lsp') 
+  call a:packager.add('dense-analysis/ale')
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
@@ -70,6 +71,7 @@ set timeoutlen=200
 
 "--- LSP settings ---------------------------------------------------------------------"
 let lspOptions = #{
+    \ aleSupport: v:true,
     \ autoHighlight: v:true,
     \ autoPopulateDiags: v:true,
     \ diagVirtualTextAlign: 'after',
@@ -104,7 +106,6 @@ let lspServers = [
     \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
     \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-    \ #{ name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [] },
     \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
     \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
@@ -135,6 +136,37 @@ nnoremap <leader>K :LspPeekDefinition<CR>
 nnoremap <leader>L :LspFormat<CR>
 nnoremap ]e :LspDiag next<CR>
 nnoremap [e :LspDiag prev<CR>
+
+"--- ALE Settings ---------------------------------------------------------------------"
+"Show linting errors with highlights
+let g:ale_set_signs = 1
+let g:ale_set_highlights = 1
+let g:ale_virtualtext_cursor = 1
+"Change highlight style when color scheme is sourced
+augroup ALEHighlights
+    autocmd!
+    autocmd ColorScheme * highlight link ALEError ErrorMsg
+augroup END
+
+"Set linters for individual filetypes
+let g:ale_linters = {
+    \ 'python': ['ruff', 'mypy', 'pylsp'],
+\ }
+"Specify fixers for individual filetypes
+let g:ale_fixers = {
+    \ '*': ['trim_whitespace'],
+    \ 'python': ['ruff'],
+\ }
+"Show info, warnings, and errors; Write which linter produced the message
+let g:ale_lsp_show_message_severity = 'information'
+let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
+"Specify Containerfiles as Dockerfiles
+let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+
+"Mapping to run fixers on file and navigate between errors
+nnoremap <leader>L :ALEFix<CR>
+nnoremap ]e :ALENextWrap<CR>
+nnoremap [e :ALEPreviousWrap<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
