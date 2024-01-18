@@ -11,7 +11,7 @@ set number relativenumber
 set wrap linebreak
 set encoding=UTF-8
 set updatetime=100
-set makeproj=task
+set makeprg=task
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
@@ -38,7 +38,7 @@ function! s:packager_init(packager) abort
   "Navigation and search
   call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
   "Language-aware actions, linting & fixing, autocompletion
-  call a:packager.add('yegappan/lsp') 
+  "call a:packager.add('yegappan/lsp') 
   call a:packager.add('dense-analysis/ale')
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
@@ -71,30 +71,30 @@ nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 set timeoutlen=200
 
 "--- LSP settings ---------------------------------------------------------------------"
-let lspOptions = #{
-    \ aleSupport: v:true,
-    \ autoHighlight: v:true,
-    \ autoPopulateDiags: v:true,
-    \ diagVirtualTextAlign: 'after',
-    \ noNewlineInCompletion: v:true,
-    \ outlineOnRight: v:true,
-    \ outlineWinSize: 70,
-    \ semanticHighlight: v:true,
-    \ showDiagInBaloon: v:false,
-    \ showDiagWithVirtualText: v:true,
-    \ showInlayHints: v:true,
-    \ showSignature: v:true,
-    \ }
-autocmd VimEnter * call LspOptionsSet(lspOptions)
-
-let yamlWorkspaceConfig = #{
-    \ completion: v:true,
-    \ validate: v:true,
-    \ schemaStore: #{
-        \ enable: v:true,
-        \ url: 'https://www.schemastore.org/api/json/catalog.json',
-        \ },
-    \ }
+"let lspOptions = #{
+    "\ aleSupport: v:true,
+    "\ autoHighlight: v:true,
+    "\ autoPopulateDiags: v:true,
+    "\ diagVirtualTextAlign: 'after',
+    "\ noNewlineInCompletion: v:true,
+    "\ outlineOnRight: v:true,
+    "\ outlineWinSize: 70,
+    "\ semanticHighlight: v:true,
+    "\ showDiagInBaloon: v:false,
+    "\ showDiagWithVirtualText: v:true,
+    "\ showInlayHints: v:true,
+    "\ showSignature: v:true,
+    "\ }
+"autocmd VimEnter * call LspOptionsSet(lspOptions)
+"
+"let yamlWorkspaceConfig = #{
+    "\ completion: v:true,
+    "\ validate: v:true,
+    "\ schemaStore: #{
+        "\ enable: v:true,
+        "\ url: 'https://www.schemastore.org/api/json/catalog.json',
+        "\ },
+    "\ }
 "Install LSP servers via:
 " go install golang.org/x/tools/gopls@latest
 " python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
@@ -103,42 +103,46 @@ let yamlWorkspaceConfig = #{
 " npm install -g typescript typescript-language-server
 " npm install -g vscode-langservers-extracted
 " brew install terraform-ls marksman
-let lspServers = [
-    \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
-    \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
-    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-    \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-    \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
-    \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
-    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
-    \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
-\ ]
-autocmd VimEnter * call LspAddServer(lspServers)
+"let lspServers = [
+    "\ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
+    "\ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+    "\ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
+    "\ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
+    "\ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
+    "\ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
+    "\ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+    "\ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
+"\ ]
+"autocmd VimEnter * call LspAddServer(lspServers)
 
 "Enable auto selection of the fist autocomplete item
-augroup LspSetup
-    au!
-    au User LspAttached set completeopt-=noselect
-augroup END
+"augroup LspSetup
+    "au!
+    "au User LspAttached set completeopt-=noselect
+"augroup END
 "Disable newline on selecting completion option
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
+"inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 
 "Link inlay hints to the conceal group
-highlight link LspInlayHint Conceal
+"highlight link LspInlayHint Conceal
 
 "Mappings for most-used functions
-nnoremap <leader>d :LspGotoDefinition<CR>
-nnoremap <leader>r :LspShowReferences<CR>
-nnoremap <leader>i :LspGotoImplementation<CR>
-nnoremap <leader>R :LspRename<CR>
-nnoremap <leader>o :LspDocumentSymbol<CR>
-nnoremap <leader>O :LspOutline<CR>
-nnoremap <leader>K :LspPeekDefinition<CR>
-nnoremap <leader>L :LspFormat<CR>
-nnoremap ]e :LspDiag next<CR>
-nnoremap [e :LspDiag prev<CR>
+"nnoremap <leader>d :LspGotoDefinition<CR>
+"nnoremap <leader>r :LspShowReferences<CR>
+"nnoremap <leader>i :LspGotoImplementation<CR>
+"nnoremap <leader>R :LspRename<CR>
+"nnoremap <leader>o :LspDocumentSymbol<CR>
+"nnoremap <leader>O :LspOutline<CR>
+"nnoremap <leader>K :LspPeekDefinition<CR>
+"nnoremap <leader>L :LspFormat<CR>
+"nnoremap ]e :LspDiag next<CR>
+"nnoremap [e :LspDiag prev<CR>
 
 "--- ALE Settings ---------------------------------------------------------------------"
+let g:ale_completion_enabled = 1
+let g:ale_lint_on_save = 1
+let g:ale_fix_on_save = 0
+let g:ale_hover_cursor = 1
 "Show linting errors with highlights
 let g:ale_set_signs = 1
 let g:ale_set_highlights = 1
@@ -156,7 +160,7 @@ let g:ale_linters = {
 "Specify fixers for individual filetypes
 let g:ale_fixers = {
     \ '*': ['trim_whitespace'],
-    \ 'python': ['ruff'],
+    \ 'python': ['ruff', 'ruff_format'],
 \ }
 "Show info, warnings, and errors; Write which linter produced the message
 let g:ale_lsp_show_message_severity = 'information'
@@ -168,6 +172,9 @@ let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 nnoremap <leader>L :ALEFix<CR>
 nnoremap ]e :ALENextWrap<CR>
 nnoremap [e :ALEPreviousWrap<CR>
+nnoremap <leader>d :ALEGoToDefinition<CR>
+nnoremap <leader>r :ALEFindReferences<CR>
+nnoremap <leader>R :ALERename<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
@@ -226,50 +233,9 @@ let g:gitgutter_sign_modified_removed = '┨'
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 
-"--- Lightline settings ------------------------------------------------------"
+"--- Statusbar settings ------------------------------------------------------"
 "Don't show the mode as it is present in statusline; always show the statusline
 set noshowmode laststatus=2
-
-function! StatusbarFilename()
-  let filename = expand('%:t') !=# '' ? expand('%:t') : '[No Name]'
-  let modified = &modified ? ' *' : ''
-  let icon = nerdfont#find(filename)
-  return icon . ' ' . filename . modified
-endfunction
-
-function StatusbarGitBranch()
-  let branch = FugitiveHead()
-  return branch !=# '' ? ' ' . branch : ''
-endfunction
-
-function StatusbarGitDiff()
-  if exists('g:loaded_gitgutter') && get(g:, 'gitgutter_enabled')
-    let [l:added, l:changed, l:removed] = GitGutterGetHunkSummary()
-    return '+' . l:added . ' ~' . l:changed . ' -' . l:removed
-  endif
-endfunction
-
-function! StatusbarDiagnostics()
-  let diags = lsp#lsp#ErrorCount()
-  let errs = 'E' . diags.Error
-  let warns = 'W' . diags.Warn
-  return errs . ' ' . warns
-endfunction
-
-let g:lightline = {
-      \ 'colorscheme': 'wombat',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'filename' ], 
-      \             [ 'gitbranch', 'gitdiff', 'diagnostics' ] ]
-      \ },
-      \ 'component_function': {
-      \   'filename': 'StatusbarFilename',
-      \   'gitbranch': 'StatusbarGitBranch',
-      \   'gitdiff': 'StatusbarGitDiff',
-      \   'diagnostics': 'StatusbarDiagnostics',
-      \ },
-      \ }
 
 "--- Vim Test settings ----------------------------------------------------------------"
 nnoremap <leader>tn :TestNearest \| cope<CR>
