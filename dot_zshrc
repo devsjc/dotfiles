@@ -36,11 +36,15 @@ fi
 autoload -Uz compinit
 compinit -i
 
-# Enable history
+# Enable history, making the history file if it doesn't exist
+if [[ ! -f "${XDG_CACHE_HOME}/zsh/zsh_history" ]]; then
+  mkdir -p "${XDG_CACHE_HOME}/zsh"
+  touch "${XDG_CACHE_HOME}/zsh/zsh_history"
+fi
 HISTFILE=${XDG_CACHE_HOME}/zsh/zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
-setopt appendhistory
+setopt INC_APPEND_HISTORY
 
 #=== PLUGINS =========================================================================
 
