@@ -143,6 +143,7 @@ let g:ale_completion_enabled = 1
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save = 0
 let g:ale_hover_cursor = 1
+let g:ale_set_balloons = 1
 "Show linting errors with highlights
 let g:ale_set_signs = 1
 let g:ale_set_highlights = 1
