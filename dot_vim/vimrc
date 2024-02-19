@@ -98,17 +98,19 @@ let yamlWorkspaceConfig = #{
 
 " Install LSP servers via:
 " go install golang.org/x/tools/gopls@latest
-" python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
+" python -m pip install -y python-lsp-server pylsp-mypy
+" python -m pip install ruff-lsp
 " npm install -g dart-language-server
 " npm install -g vim-language-server
 " npm install -g typescript typescript-language-server
 " npm install -g vscode-langservers-extracted
 " brew install terraform-ls marksman
 let lspServers = [
-    \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
+    \ #{ name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
     \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
     \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
+    \ #{ name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [], features: { "documentFormatting": v:true }},
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
     \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
     \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
@@ -150,8 +152,6 @@ nnoremap <leader>o :LspDocumentSymbol<CR>
 nnoremap <silent> <leader>l :call ToggleLspOutline()<CR>
 nnoremap <leader>K :LspPeekDefinition<CR>
 nnoremap <leader>L :LspFormat<CR>
-nnoremap ]e :LspDiag next<CR>
-nnoremap [e :LspDiag prev<CR>
 
 "--- ALE Settings ---------------------------------------------------------------------"
 let g:ale_disable_lsp = 1
@@ -186,6 +186,8 @@ let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
 "Mapping to run fixers on file and navigate between errors
 nnoremap <leader>L :ALEFix<CR>
+nnoremap ]e :LspDiag next<CR>
+nnoremap [e :LspDiag prev<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
