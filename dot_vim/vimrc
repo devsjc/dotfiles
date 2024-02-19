@@ -38,14 +38,14 @@ function! s:packager_init(packager) abort
   "Navigation and search
   call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
   "Language-aware actions, linting & fixing, autocompletion
-  "call a:packager.add('yegappan/lsp') 
+  call a:packager.add('yegappan/lsp') 
   call a:packager.add('dense-analysis/ale')
   call a:packager.add('github/copilot.vim')
   "QOL IDE-like features
   call a:packager.add('907th/vim-auto-save')
   call a:packager.add('LunarWatcher/auto-pairs')
   call a:packager.add('airblade/vim-gitgutter')
-  call a:packager.add('itchyny/lightline.vim')
+  call a:packager.add('bluz71/vim-mistfly-statusline')
   call a:packager.add('lambdalisue/fern.vim', {'requires': [
       \ 'lambdalisue/fern-git-status.vim',
       \ 'lambdalisue/fern-renderer-nerdfont.vim',
@@ -71,31 +71,32 @@ nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
 set timeoutlen=200
 
 "--- LSP settings ---------------------------------------------------------------------"
-"let lspOptions = #{
-    "\ aleSupport: v:true,
-    "\ autoHighlight: v:true,
-    "\ autoPopulateDiags: v:true,
-    "\ diagVirtualTextAlign: 'after',
-    "\ noNewlineInCompletion: v:true,
-    "\ outlineOnRight: v:true,
-    "\ outlineWinSize: 70,
-    "\ semanticHighlight: v:true,
-    "\ showDiagInBaloon: v:false,
-    "\ showDiagWithVirtualText: v:true,
-    "\ showInlayHints: v:true,
-    "\ showSignature: v:true,
-    "\ }
-"autocmd VimEnter * call LspOptionsSet(lspOptions)
-"
-"let yamlWorkspaceConfig = #{
-    "\ completion: v:true,
-    "\ validate: v:true,
-    "\ schemaStore: #{
-        "\ enable: v:true,
-        "\ url: 'https://www.schemastore.org/api/json/catalog.json',
-        "\ },
-    "\ }
-"Install LSP servers via:
+let lspOptions = #{
+    \ aleSupport: v:true,
+    \ autoHighlight: v:true,
+    \ autoPopulateDiags: v:true,
+    \ diagVirtualTextAlign: 'after',
+    \ noNewlineInCompletion: v:true,
+    \ outlineOnRight: v:true,
+    \ outlineWinSize: 50,
+    \ semanticHighlight: v:true,
+    \ showDiagInBaloon: v:true,
+    \ showDiagWithVirtualText: v:false,
+    \ showInlayHints: v:true,
+    \ showSignature: v:true,
+    \ }
+autocmd VimEnter * call LspOptionsSet(lspOptions)
+
+let yamlWorkspaceConfig = #{
+    \ completion: v:true,
+    \ validate: v:true,
+    \ schemaStore: #{
+        \ enable: v:true,
+        \ url: 'https://www.schemastore.org/api/json/catalog.json',
+        \ },
+    \ }
+
+" Install LSP servers via:
 " go install golang.org/x/tools/gopls@latest
 " python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
 " npm install -g dart-language-server
@@ -103,47 +104,61 @@ set timeoutlen=200
 " npm install -g typescript typescript-language-server
 " npm install -g vscode-langservers-extracted
 " brew install terraform-ls marksman
-"let lspServers = [
-    "\ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
-    "\ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
-    "\ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-    "\ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-    "\ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
-    "\ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
-    "\ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
-    "\ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
-"\ ]
-"autocmd VimEnter * call LspAddServer(lspServers)
+let lspServers = [
+    \ #{ name: 'dart',  filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
+    \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
+    \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
+    \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
+    \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
+    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+    \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
+\ ]
+autocmd VimEnter * call LspAddServer(lspServers)
 
 "Enable auto selection of the fist autocomplete item
-"augroup LspSetup
-    "au!
-    "au User LspAttached set completeopt-=noselect
-"augroup END
+augroup LspSetup
+    au!
+    au User LspAttached set completeopt-=noselect
+augroup END
 "Disable newline on selecting completion option
-"inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
+inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 
 "Link inlay hints to the conceal group
-"highlight link LspInlayHint Conceal
+highlight link LspInlayHint Conceal
+
+
+"Enable toggling of outline window
+function! ToggleLspOutline()
+  let winid = bufwinid('LSP-Outline')
+    if winid == -1
+        LspOutline
+    else
+      let winnr = win_id2win(winid)
+      if winnr > 0
+        execute winnr.'wincmd c'
+      endif
+    endif
+endfunction
 
 "Mappings for most-used functions
-"nnoremap <leader>d :LspGotoDefinition<CR>
-"nnoremap <leader>r :LspShowReferences<CR>
-"nnoremap <leader>i :LspGotoImplementation<CR>
-"nnoremap <leader>R :LspRename<CR>
-"nnoremap <leader>o :LspDocumentSymbol<CR>
-"nnoremap <leader>O :LspOutline<CR>
-"nnoremap <leader>K :LspPeekDefinition<CR>
-"nnoremap <leader>L :LspFormat<CR>
-"nnoremap ]e :LspDiag next<CR>
-"nnoremap [e :LspDiag prev<CR>
+nnoremap <leader>d :LspGotoDefinition<CR>
+nnoremap <leader>r :LspShowReferences<CR>
+nnoremap <leader>i :LspGotoImplementation<CR>
+nnoremap <leader>R :LspRename<CR>
+nnoremap <leader>o :LspDocumentSymbol<CR>
+nnoremap <silent> <leader>l :call ToggleLspOutline()<CR>
+nnoremap <leader>K :LspPeekDefinition<CR>
+nnoremap <leader>L :LspFormat<CR>
+nnoremap ]e :LspDiag next<CR>
+nnoremap [e :LspDiag prev<CR>
 
 "--- ALE Settings ---------------------------------------------------------------------"
-let g:ale_completion_enabled = 1
+let g:ale_disable_lsp = 1
 let g:ale_lint_on_save = 1
 let g:ale_fix_on_save = 0
 let g:ale_hover_cursor = 1
-let g:ale_set_balloons = 1
+let g:ale_set_balloons = 'hover'
 "Show linting errors with highlights
 let g:ale_set_signs = 1
 let g:ale_set_highlights = 1
@@ -171,11 +186,6 @@ let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
 
 "Mapping to run fixers on file and navigate between errors
 nnoremap <leader>L :ALEFix<CR>
-nnoremap ]e :ALENextWrap<CR>
-nnoremap [e :ALEPreviousWrap<CR>
-nnoremap <leader>d :ALEGoToDefinition<CR>
-nnoremap <leader>r :ALEFindReferences<CR>
-nnoremap <leader>R :ALERename<CR>
 
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
@@ -224,13 +234,6 @@ let g:go_highlight_build_constraints = 1
 let g:go_highlight_extra_types = 1
 
 "--- GitGutter settings ---------------------------------------------------------------"
-let g:gitgutter_sign_added = '┃'
-let g:gitgutter_sign_modified = '┃'
-let g:gitgutter_sign_removed = '┃'
-let g:gitgutter_sign_removed_first_line = '┓'
-let g:gitgutter_sign_removed_above_and_below = '╏'
-let g:gitgutter_sign_modified_removed = '┨'
-
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 
@@ -262,6 +265,7 @@ let g:db_ui_table_helpers = {
 \ }
 
 "--- Colorscheme settings -----------------------------------------------------------------"
-let g:jb_style='mid'
+let g:jb_style='dark'
+let g:jb_enable_unicode = 1
 colorscheme jb
 
