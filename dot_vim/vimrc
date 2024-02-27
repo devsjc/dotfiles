@@ -58,6 +58,7 @@ function! s:packager_init(packager) abort
   call a:packager.add('lambdalisue/nerdfont.vim')
   "Misc helper plugins
   call a:packager.add('tpope/vim-fugitive')
+  call a:packager.add('mbbill/undotree')
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('kristijanhusak/vim-dadbod-ui', {'requires': ['tpope/vim-dadbod']})
 endfunction
@@ -98,7 +99,7 @@ let yamlWorkspaceConfig = #{
 
 " Install LSP servers via:
 " go install golang.org/x/tools/gopls@latest
-" python -m pip install -y python-lsp-server pylsp-mypy
+" python -m pip install -y python-lsp-server pylsp-mypy python-lsp-ruff
 " python -m pip install ruff-lsp
 " npm install -g dart-language-server
 " npm install -g vim-language-server
@@ -110,7 +111,6 @@ let lspServers = [
     \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
     \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
     \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-    \ #{ name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [], features: { "documentFormatting": v:true }},
     \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
     \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
     \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
@@ -144,14 +144,14 @@ function! ToggleLspOutline()
 endfunction
 
 "Mappings for most-used functions
-nnoremap <leader>d :LspGotoDefinition<CR>
+nnoremap gd :LspGotoDefinition<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
-nnoremap <leader>o :LspDocumentSymbol<CR>
-nnoremap <silent> <leader>l :call ToggleLspOutline()<CR>
-nnoremap <leader>K :LspPeekDefinition<CR>
+nnoremap <leader>O :LspDocumentSymbol<CR>
+nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
 nnoremap <leader>L :LspFormat<CR>
+nnoremap <leader>P :LspSymbolSearch<CR>
 
 "--- ALE Settings ---------------------------------------------------------------------"
 let g:ale_disable_lsp = 1
@@ -192,9 +192,10 @@ nnoremap [e :LspDiag prev<CR>
 "--- Fuzzy Finder Settings ------------------------------------------------------------"
 "Mappings for searching within files and buffers
 nnoremap <leader>f :BLines<CR>
-nnoremap <leader><leader> :GFiles<CR>
+nnoremap <leader>p :GFiles<CR>
 nnoremap <leader>F :Ag<CR>
 nnoremap <leader>b :Buffers<CR>
+nnoremap <leader>K :Commands
 
 "Map buffer quick switch keys
 nnoremap <leader><Tab> <C-^><CR>
@@ -211,6 +212,9 @@ nnoremap <leader>gh :0Gclog<CR>
 "--- AutoPairs settings ---------------------------------------------------------------"
 let g:AutoPairsCompleteOnlyOnSpace = 1
 
+"--- UndoTree settings ----------------------------------------------------------------"
+nnoremap <leader>u :UndotreeToggle<CR>
+
 "--- Fern Filetree settings -----------------------------------------------------------"
 let g:fern#renderer = "nerdfont"
 let g:fern#default_hidden = 1
@@ -219,7 +223,7 @@ let g:fern#default_exclude = '\%(
       \\|__pycache__\|_cache\|egg-info\|build\|dist
       \\)$'
 
-nnoremap <leader>a :Fern . -drawer -toggle<CR>
+nnoremap <leader>1 :Fern . -drawer -toggle<CR>
 
 "--- AutoSave settings ----------------------------------------------------------------"
 set noswapfile
