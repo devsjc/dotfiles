@@ -1,8 +1,7 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 # regex to validate in commit msg
 commit_regex="^(feat|fix|docs|style|refactor|perf|test)(\(.+\))?: .+$"
-error_msg="Aborting commit. Commits should be of the form 'type(scope): message' where type is one of the following:"
 
 if ! grep -iqE "$commit_regex" "$1"; then
     echo "Aborting commit."  >&2
