@@ -129,7 +129,6 @@ inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 "Link inlay hints to the conceal group
 highlight link LspInlayHint Conceal
 
-
 "Enable toggling of outline window
 function! ToggleLspOutline()
   let winid = bufwinid('LSP-Outline')
