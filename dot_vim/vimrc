@@ -259,7 +259,6 @@ let g:test#python#pyunit#executable = 'python -m unittest --buffer'
 let g:test#go#gotest#executable = 'go test -v'
 
 "--- DadBod Settings ------------------------------------------------------------------"
-let g:dbs = {'local': 'postgres://postgres@localhost:5432/postgres'}
 let g:db_ui_auto_execute_table_helpers = 1
 let g:db_ui_use_nerd_fonts = 1
 let g:db_ui_winwidth = 30

@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # regex to validate in commit msg
-commit_regex="^(feat|fix|docs|style|refactor|perf|test)(\(.+\))?: .+$"
+commit_regex="^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .+$"
 
 if ! grep -iqE "$commit_regex" "$1"; then
     echo "Aborting commit."  >&2
@@ -13,6 +13,7 @@ if ! grep -iqE "$commit_regex" "$1"; then
     echo "  refactor: A code change that neither fixes a bug nor adds a feature"  >&2
     echo "  perf:     A code change that improves performance"  >&2
     echo "  test:     Adding missing tests or correcting existing tests"  >&2
+    echo "  chore:    Changes to the build process or auxiliary tools and libraries such as documentation generation"  >&2
     exit 1
 fi
 

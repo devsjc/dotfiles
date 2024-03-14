@@ -117,6 +117,8 @@ fi
 
 export EDITOR='vim'
 export HOMEBREW_AUTOREMOVE=1
+export DB_UI_DEFAULT="postgresql://localhost:5432/postgres"
+export DB_UI_DAGSTER="postgresql://localhost:5432/dagster"
 
 #--- Aliases -------------------------------------------------------------------------
 if [[ -x "$(command -v bat)" ]]; then
