@@ -13,6 +13,7 @@ set encoding=UTF-8
 set updatetime=100
 set makeprg=task
 set splitbelow splitright
+set termwinsize=10x0
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
