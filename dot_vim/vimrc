@@ -68,6 +68,8 @@ function! s:packager_init(packager) abort
   call a:packager.add('mbbill/undotree')
   call a:packager.add('liuchengxu/vim-which-key')
   call a:packager.add('kristijanhusak/vim-dadbod-ui', {'requires': ['tpope/vim-dadbod']})
+  "Non-coding plugins
+  call a:packager.add('vimwiki/vimwiki')
 endfunction
 
 packadd vim-packager
@@ -274,6 +276,10 @@ let g:db_ui_table_helpers = {
 \     'Count': 'select count(*) from {dbname}.{table}',
 \   }
 \ }
+
+"--- VimWiki settings -----------------------------------------------------------------"
+let g:vimwiki_list = [{'path': '~/vimwiki/', 'ext': 'md'}]
+let g:vimwiki_global_ext = 0
 
 "--- Colorscheme settings -----------------------------------------------------------------"
 let g:jb_style='dark'
