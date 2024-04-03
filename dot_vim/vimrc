@@ -1,8 +1,10 @@
-"=== VIM SETTINGS ====================================================================="
+vim9script
+#=== VIM SETTINGS =====================================================================
 
-unlet! skip_defaults_vim
+unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
+g:mapleader = ' '
 syntax enable
 filetype plugin indent on
 set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -11,148 +13,127 @@ set number relativenumber
 set wrap linebreak
 set encoding=UTF-8
 set updatetime=100
-set makeprg=task
 set splitbelow splitright
 set termwinsize=10x0
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType terraform setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType vim setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
 
-let mapleader="\<space>"
+if has("persistent_undo")
+  var target_path = expand('/var/tmp/vimundo/')
+  if !isdirectory(target_path)
+    call mkdir(target_path, "p", 0700)
+  endif
+  g:undodir = target_path
+  set undofile
+endif
 
-nnoremap <expr> n (v:searchforward ? 'n' : 'N')
-nnoremap <expr> N (v:searchforward ? 'N' : 'n')
-nnoremap <C-J> <C-W><C-J>
-nnoremap <C-K> <C-W><C-K>
-nnoremap <C-L> <C-W><C-L>
-nnoremap <C-H> <C-W><C-H>
-
-
-function! SynGroup()
+def SynGroup()
   let l:s = synID(line('.'), col('.'), 1)
   echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
-endfun
+enddef
 
-"=== PLUGINS =========================================================================="
+#=== PLUGINS ==========================================================================
 
-function! s:packager_init(packager) abort
-  call a:packager.add('kristijanhusak/vim-packager', {'type': 'opt'})
-  "Navigation and search
-  call a:packager.add('junegunn/fzf.vim', {'requires': ['junegunn/fzf'], 'do': 'brew install fzf'})
-  "Language-aware actions, linting & fixing, autocompletion
-  call a:packager.add('yegappan/lsp') 
-  call a:packager.add('dense-analysis/ale')
-  call a:packager.add('github/copilot.vim')
-  "QOL IDE-like features
-  call a:packager.add('907th/vim-auto-save')
-  call a:packager.add('LunarWatcher/auto-pairs')
-  call a:packager.add('airblade/vim-gitgutter')
-  call a:packager.add('bluz71/vim-mistfly-statusline')
-  call a:packager.add('lambdalisue/fern.vim', {'requires': [
-      \ 'lambdalisue/fern-git-status.vim',
-      \ 'lambdalisue/fern-renderer-nerdfont.vim',
-      \ 'lambdalisue/fern-hijack.vim'
-      \ ]})
-  call a:packager.add('janko-m/vim-test', {'requires': 'skywind3000/asyncrun.vim'})
-  call a:packager.add('ap/vim-css-color')
-  "Icons, Colours and syntax highlighting
-  call a:packager.add('devsjc/vim-jb', {'requires': ['sheerun/vim-polyglot']})
-  call a:packager.add('lambdalisue/nerdfont.vim')
-  "Misc helper plugins
-  call a:packager.add('tpope/vim-fugitive')
-  call a:packager.add('mbbill/undotree')
-  call a:packager.add('liuchengxu/vim-which-key')
-  call a:packager.add('kristijanhusak/vim-dadbod-ui', {'requires': ['tpope/vim-dadbod']})
-  "Non-coding plugins
-  call a:packager.add('vimwiki/vimwiki')
-endfunction
+if empty(glob('~/.vim/autoload/plug.vim'))
+  execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+endif
 
-packadd vim-packager
-call packager#setup(function('s:packager_init'))
+plug#begin('~/.vim/pack/packager/start')
 
-"--- WhichKey settings ----------------------------------------------------------------"
-let g:mapleader = "\<Space>"
-nnoremap <silent> <leader> :<c-u>WhichKey '<Space>'<CR>
-set timeoutlen=200
+# Navigation and search
+Plug 'girishji/scope.vim'
+Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
+Plug 'github/copilot.vim'
+# QOL IDE-like features
+Plug '907th/vim-auto-save'
+Plug 'LunarWatcher/auto-pairs'
+Plug 'airblade/vim-gitgutter'
+Plug 'bluz71/vim-mistfly-statusline'
+# File tree
+Plug 'lambdalisue/fern.vim'
+# Helpers
+Plug 'janko-m/vim-test'
+Plug 'skywind3000/asyncrun.vim'
+Plug 'mbbill/undotree'
+Plug 'ap/vim-css-color'
+Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-dadbod'
+Plug 'kristijanhusak/vim-dadbod-ui'
+# Colors
+Plug 'devsjc/vim-jb'
 
-"--- LSP settings ---------------------------------------------------------------------"
-let lspOptions = #{
-    \ aleSupport: v:true,
-    \ autoHighlight: v:true,
-    \ autoPopulateDiags: v:true,
-    \ diagVirtualTextAlign: 'after',
-    \ noNewlineInCompletion: v:true,
-    \ outlineOnRight: v:true,
-    \ outlineWinSize: 50,
-    \ semanticHighlight: v:true,
-    \ showDiagInBaloon: v:true,
-    \ showDiagWithVirtualText: v:false,
-    \ showInlayHints: v:true,
-    \ showSignature: v:true,
-    \ }
+plug#end()
+
+#--- LSP settings ---------------------------------------------------------------------
+var lspOptions = {
+    aleSupport: v:false,
+    autoHighlight: v:true,
+    autoPopulateDiags: v:true,
+    noNewlineInCompletion: v:true,
+    outlineOnRight: v:true,
+    outlineWinSize: 50,
+    semanticHighlight: v:true,
+    showDiagInBaloon: v:true,
+    showDiagWithVirtualText: v:false,
+    showInlayHints: v:true,
+    showSignature: v:true,
+}
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
-let yamlWorkspaceConfig = #{
-    \ completion: v:true,
-    \ validate: v:true,
-    \ schemaStore: #{
-        \ enable: v:true,
-        \ url: 'https://www.schemastore.org/api/json/catalog.json',
-        \ },
-    \ }
-
-" Install LSP servers via:
-" go install golang.org/x/tools/gopls@latest
-" python -m pip install -y python-lsp-server pylsp-mypy python-lsp-ruff
-" python -m pip install ruff-lsp
-" npm install -g dart-language-server
-" npm install -g vim-language-server
-" npm install -g typescript typescript-language-server
-" npm install -g vscode-langservers-extracted
-" brew install terraform-ls marksman
-let lspServers = [
-    \ #{ name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
-    \ #{ name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
-    \ #{ name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-    \ #{ name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-    \ #{ name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
-    \ #{ name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'], workspaceConfig: yamlWorkspaceConfig },
-    \ #{ name: 'vsc-mdls', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
-    \ #{ name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
-\ ]
+# Install LSP servers via:
+# go install golang.org/x/tools/gopls@latest
+# python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
+# npm install -g dart-language-server vim-language-server typescript typescript-language-server vscode-langservers-extracted
+# brew install terraform-ls marksman
+var lspServers = [
+  { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
+  { name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+  { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
+  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
+  { name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
+  {
+    name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'],
+    workspaceConfig: { completion: v:true, validate: v:true, schemaStore: { enable: v:true, url: 'https://www.schemastore.org/api/json/catalog.json' } },
+  },
+  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+  { name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
+]
 autocmd VimEnter * call LspAddServer(lspServers)
 
-"Enable auto selection of the fist autocomplete item
-augroup LspSetup
-    au!
-    au User LspAttached set completeopt-=noselect
-augroup END
-"Disable newline on selecting completion option
-inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
+# Enable auto selection of the fist autocomplete item
+#augroup LspSetup
+#    au!
+#    au User LspAttached set completeopt-=noselect
+#augroup END
+# Disable newline on selecting completion option
+#inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
 
-"Link inlay hints to the conceal group
+# Link inlay hints to the conceal group
 highlight link LspInlayHint Conceal
 
-"Enable toggling of outline window
-function! ToggleLspOutline()
-  let winid = bufwinid('LSP-Outline')
+# Enable toggling of outline window
+def ToggleLspOutline()
+  var winid = bufwinid('LSP-Outline')
     if winid == -1
         LspOutline
     else
-      let winnr = win_id2win(winid)
+      var winnr = win_id2win(winid)
       if winnr > 0
         execute winnr.'wincmd c'
       endif
     endif
-endfunction
+enddef
 
-"Mappings for most-used functions
 nnoremap gd :LspGotoDefinition<CR>
+nnoremap ]e :LspDiag next<CR>
+nnoremap [e :LspDiag prev<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
@@ -161,54 +142,20 @@ nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
 nnoremap <leader>L :LspFormat<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
 
-"--- ALE Settings ---------------------------------------------------------------------"
-let g:ale_disable_lsp = 1
-let g:ale_lint_on_save = 1
-let g:ale_fix_on_save = 0
-let g:ale_hover_cursor = 1
-let g:ale_set_balloons = 'hover'
-"Show linting errors with highlights
-let g:ale_set_signs = 1
-let g:ale_set_highlights = 1
-let g:ale_virtualtext_cursor = 1
-"Change highlight style when color scheme is sourced
-augroup ALEHighlights
-    autocmd!
-    autocmd ColorScheme * highlight link ALEError ErrorMsg
-augroup END
+#--- Scope Settings ------------------------------------------------------------"
+import autoload 'scope/fuzzy.vim'
+nnoremap <leader>f <scriptcmd>fuzzy.BufSearch()<CR>
+nnoremap <leader>p <scriptcmd>fuzzy.GitFile()<CR>
+nnoremap <leader>F <scriptcmd>fuzzy.Grep('ag --vimgrep')<CR>
+nnoremap <leader>b <scriptcmd>fuzzy.Buffer()<CR>
+nnoremap <leader>K <scriptcmd>fuzzy.Command()<CR>
+nnoremap <leader>h <scriptcmd>fuzzy.HelpfilesGrep()<CR>
+nnoremap <leader><leader> <scriptcmd>fuzzy.Keymap()<CR>
 
-"Set linters for individual filetypes
-let g:ale_linters = {
-    \ 'python': ['ruff', 'mypy', 'pylsp'],
-\ }
-"Specify fixers for individual filetypes
-let g:ale_fixers = {
-    \ '*': ['trim_whitespace'],
-    \ 'python': ['ruff', 'ruff_format'],
-\ }
-"Show info, warnings, and errors; Write which linter produced the message
-let g:ale_lsp_show_message_severity = 'information'
-let g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
-"Specify Containerfiles as Dockerfiles
-let g:ale_linter_aliases = {"Containerfile": "dockerfile"}
-
-"Mapping to run fixers on file and navigate between errors
-nnoremap <leader>L :ALEFix<CR>
-nnoremap ]e :LspDiag next<CR>
-nnoremap [e :LspDiag prev<CR>
-
-"--- Fuzzy Finder Settings ------------------------------------------------------------"
-"Mappings for searching within files and buffers
-nnoremap <leader>f :BLines<CR>
-nnoremap <leader>p :GFiles<CR>
-nnoremap <leader>F :Ag<CR>
-nnoremap <leader>b :Buffers<CR>
-nnoremap <leader>K :Commands
-
-"Map buffer quick switch keys
+# Map buffer quick switch keys
 nnoremap <leader><Tab> <C-^><CR>
 
-"--- Fugitive settings ----------------------------------------------------------------"
+#--- Fugitive settings ----------------------------------------------------------------"
 nnoremap <leader>ga :Gwrite<CR>
 nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gd :Git diff --minimal<CR>
@@ -217,72 +164,68 @@ nnoremap <leader>gl :Git log --graph --oneline --decorate<CR>
 nnoremap <leader>gp :Git push<CR>
 nnoremap <leader>gh :0Gclog<CR>
 
-"--- AutoPairs settings ---------------------------------------------------------------"
-let g:AutoPairsCompleteOnlyOnSpace = 1
+#--- AutoPairs settings ---------------------------------------------------------------"
+g:AutoPairsCompleteOnlyOnSpace = 1
 
-"--- UndoTree settings ----------------------------------------------------------------"
-nnoremap <leader>u :UndotreeToggle<CR>
-
-"--- Fern Filetree settings -----------------------------------------------------------"
-let g:fern#renderer = "nerdfont"
-let g:fern#default_hidden = 1
-let g:fern#default_exclude = '\%(
-      \\.git\|\.idea\|\.DS_Store
-      \\|__pycache__\|_cache\|egg-info\|build\|dist
-      \\)$'
+#--- Fern Filetree settings -----------------------------------------------------------"
+g:fern#default_hidden = 1
+g:fern#default_exclude = '\%(
+      \.git\|\.idea\|\.DS_Store
+      \|__pycache__\|_cache\|egg-info\|build\|dist
+      \)$'
 
 nnoremap <leader>1 :Fern . -drawer -toggle<CR>
 
-"--- AutoSave settings ----------------------------------------------------------------"
+#--- AutoSave settings ----------------------------------------------------------------"
 set noswapfile
-let g:auto_save = 1
-let g:auto_save_silent = 1
-let g:auto_save_events = ["InsertLeave", "TextChanged", "FocusLost"]
+g:auto_save = 1
+g:auto_save_silent = 1
+g:auto_save_events = ["InsertLeave", "TextChanged"]
 
-"--- Polyglot settings ----------------------------------------------------------------"
-let g:polyglot_disabled = ['sensible']
+#--- Polyglot settings ----------------------------------------------------------------"
+g:polyglot_disabled = ['sensible']
 
-"--- Go settings ----------------------------------------------------------------------"
-let g:go_highlight_generate_tags = 1
-let g:go_highlight_build_constraints = 1
-let g:go_highlight_extra_types = 1
+#--- Go settings ----------------------------------------------------------------------"
+g:go_highlight_generate_tags = 1
+g:go_highlight_build_constraints = 1
+g:go_highlight_extra_types = 1
 
-"--- GitGutter settings ---------------------------------------------------------------"
+#--- GitGutter settings ---------------------------------------------------------------"
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 
-"--- Statusbar settings ------------------------------------------------------"
-"Don't show the mode as it is present in statusline; always show the statusline
+#--- Statusbar settings ------------------------------------------------------"
+#Don't show the mode as it is present in statusline; always show the statusline
 set noshowmode laststatus=2
 
-"--- Vim Test settings ----------------------------------------------------------------"
+#--- Vim Test settings ----------------------------------------------------------------"
 nnoremap <leader>tn :TestNearest \| cope<CR>
 nnoremap <leader>tf :TestFile \| cope<CR>
 nnoremap <leader>ts :TestSuite \| cope<CR>
 nnoremap <leader>tl :TestLast \| cope<CR>
 
-let test#strategy = "asyncrun"
+g:test#strategy = "asyncrun"
 
-let g:test#python#pytest#executable = 'python -m pytest -rA'
-let g:test#python#pyunit#executable = 'python -m unittest --buffer'
-let g:test#go#gotest#executable = 'go test -v'
+g:test#python#pytest#executable = 'python -m pytest -rA'
+g:test#python#pyunit#executable = 'python -m unittest --buffer'
+g:test#go#gotest#executable = 'go test -v'
 
-"--- DadBod Settings ------------------------------------------------------------------"
-let g:db_ui_auto_execute_table_helpers = 1
-let g:db_ui_use_nerd_fonts = 1
-let g:db_ui_winwidth = 30
-let g:db_ui_table_helpers = {
-\   'postgresql': {
-\     'Count': 'select count(*) from {dbname}.{table}',
-\   }
-\ }
+#--- DadBod Settings ------------------------------------------------------------------"
+g:db_ui_auto_execute_table_helpers = 1
+g:db_ui_use_nerd_fonts = 1
+g:db_ui_winwidth = 30
+g:db_ui_table_helpers = {
+   'postgresql': {
+     'Count': 'select count(*) from {dbname}.{table}',
+   }
+}
 
-"--- VimWiki settings -----------------------------------------------------------------"
-let g:vimwiki_list = [{'path': '~/vimwiki/', 'ext': 'md'}]
-let g:vimwiki_global_ext = 0
+#--- VimWiki settings -----------------------------------------------------------------"
+g:vimwiki_list = [{'path': '~/vimwiki/', 'ext': 'md'}]
+g:vimwiki_global_ext = 0
 
-"--- Colorscheme settings -----------------------------------------------------------------"
-let g:jb_style='dark'
-let g:jb_enable_unicode = 1
+#--- Colorscheme settings -----------------------------------------------------------------"
+g:jb_style = 'dark'
+g:jb_enable_unicode = 1
 colorscheme jb
 
