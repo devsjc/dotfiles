@@ -84,6 +84,7 @@ var lspOptions = {
     showDiagWithVirtualText: v:false,
     showInlayHints: v:true,
     showSignature: v:true,
+    usePopupInCodeAction: v:true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
