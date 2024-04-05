@@ -4,7 +4,14 @@ vim9script
 unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 
-g:mapleader = ' '
+g:mapleader = ' '      # Set the leader key to space
+
+g:netrw_liststyle = 3
+g:netrw_localcopydircmd = 'cp -r'
+g:netrw_winsize = 30
+g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$'
+
+nnoremap <leader>1 :Lexplore %:p:h<CR>
 syntax enable
 filetype plugin indent on
 set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
@@ -16,6 +23,9 @@ set updatetime=100
 set splitbelow splitright
 set termwinsize=10x0
 
+g:undodir = "/var/tmp/vimundo"
+set undodir
+
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType terraform setlocal tabstop=2 shiftwidth=2 softtabstop=2
@@ -25,16 +35,7 @@ if $COLORTERM == 'truecolor'
   set termguicolors
 endif
 
-if has("persistent_undo")
-  var target_path = expand('/var/tmp/vimundo/')
-  if !isdirectory(target_path)
-    call mkdir(target_path, "p", 0700)
-  endif
-  g:undodir = target_path
-  set undofile
-endif
-
-def SynGroup()
+def g:SynGroup()
   let l:s = synID(line('.'), col('.'), 1)
   echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
 enddef
@@ -46,29 +47,25 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 plug#begin('~/.vim/pack/packager/start')
-
 # Navigation and search
 Plug 'girishji/scope.vim'
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
 Plug 'github/copilot.vim'
-# QOL IDE-like features
-Plug '907th/vim-auto-save'
-Plug 'LunarWatcher/auto-pairs'
-Plug 'airblade/vim-gitgutter'
-Plug 'bluz71/vim-mistfly-statusline'
-# File tree
-Plug 'lambdalisue/fern.vim'
-# Helpers
-Plug 'janko-m/vim-test'
-Plug 'skywind3000/asyncrun.vim'
-Plug 'mbbill/undotree'
-Plug 'ap/vim-css-color'
+# Version control
 Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+# UI modifications
+Plug 'bluz71/vim-mistfly-statusline'
+Plug 'ap/vim-css-color'
+Plug 'devsjc/vim-jb'
+# Helpers
+Plug '907th/vim-auto-save'
+Plug 'tpope/vim-dispatch'
+Plug 'janko-m/vim-test'
+Plug 'mbbill/undotree'
+# SQL navigation
 Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
-# Colors
-Plug 'devsjc/vim-jb'
-
 plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
@@ -138,7 +135,6 @@ nnoremap [e :LspDiag prev<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
-nnoremap <leader>O :LspDocumentSymbol<CR>
 nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
 nnoremap <leader>L :LspFormat<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
@@ -151,6 +147,7 @@ nnoremap <leader>F <scriptcmd>fuzzy.Grep('ag --vimgrep')<CR>
 nnoremap <leader>b <scriptcmd>fuzzy.Buffer()<CR>
 nnoremap <leader>K <scriptcmd>fuzzy.Command()<CR>
 nnoremap <leader>h <scriptcmd>fuzzy.HelpfilesGrep()<CR>
+nnoremap <leader>O <scriptcmd>fuzzy.LspDocumentSymbol()<CR>
 nnoremap <leader><leader> <scriptcmd>fuzzy.Keymap()<CR>
 
 # Map buffer quick switch keys
@@ -167,15 +164,6 @@ nnoremap <leader>gh :0Gclog<CR>
 
 #--- AutoPairs settings ---------------------------------------------------------------"
 g:AutoPairsCompleteOnlyOnSpace = 1
-
-#--- Fern Filetree settings -----------------------------------------------------------"
-g:fern#default_hidden = 1
-g:fern#default_exclude = '\%(
-      \.git\|\.idea\|\.DS_Store
-      \|__pycache__\|_cache\|egg-info\|build\|dist
-      \)$'
-
-nnoremap <leader>1 :Fern . -drawer -toggle<CR>
 
 #--- AutoSave settings ----------------------------------------------------------------"
 set noswapfile
@@ -205,25 +193,19 @@ nnoremap <leader>tf :TestFile \| cope<CR>
 nnoremap <leader>ts :TestSuite \| cope<CR>
 nnoremap <leader>tl :TestLast \| cope<CR>
 
-g:test#strategy = "asyncrun"
-
+g:test#strategy = "dispatch"
 g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#go#gotest#executable = 'go test -v'
 
 #--- DadBod Settings ------------------------------------------------------------------"
 g:db_ui_auto_execute_table_helpers = 1
-g:db_ui_use_nerd_fonts = 1
-g:db_ui_winwidth = 30
+g:db_ui_winwidth = 40
 g:db_ui_table_helpers = {
    'postgresql': {
      'Count': 'select count(*) from {dbname}.{table}',
    }
 }
-
-#--- VimWiki settings -----------------------------------------------------------------"
-g:vimwiki_list = [{'path': '~/vimwiki/', 'ext': 'md'}]
-g:vimwiki_global_ext = 0
 
 #--- Colorscheme settings -----------------------------------------------------------------"
 g:jb_style = 'dark'
