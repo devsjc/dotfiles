@@ -22,9 +22,7 @@ set encoding=UTF-8
 set updatetime=100
 set splitbelow splitright
 set termwinsize=10x0
-
-g:undodir = "/var/tmp/vimundo"
-set undodir
+g:undodir = "~/.local/state/vim/undo"
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
