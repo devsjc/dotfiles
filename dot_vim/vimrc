@@ -87,7 +87,7 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 # go install golang.org/x/tools/gopls@latest
 # python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
 # npm install -g dart-language-server vim-language-server typescript typescript-language-server vscode-langservers-extracted
-# brew install terraform-ls marksman
+# brew install marksman
 var lspServers = [
   { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
   { name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
@@ -99,7 +99,6 @@ var lspServers = [
     workspaceConfig: { completion: v:true, validate: v:true, schemaStore: { enable: v:true, url: 'https://www.schemastore.org/api/json/catalog.json' } },
   },
   { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
-  { name: 'terraform-ls', filetype: ['terraform'], path: 'terraform-ls', args: ['serve'] },
 ]
 autocmd VimEnter * call LspAddServer(lspServers)
 
