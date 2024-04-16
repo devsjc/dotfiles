@@ -22,12 +22,14 @@ set encoding=UTF-8
 set updatetime=100
 set splitbelow splitright
 set termwinsize=10x0
-g:undodir = "~/.local/state/vim/undo"
+set undofile undodir=~/.local/state/vim/undo
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType terraform setlocal tabstop=2 shiftwidth=2 softtabstop=2
 autocmd FileType vim setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType css setlocal tabstop=2 shiftwidth=2 softtabstop=2
+autocmd FileType scss setlocal tabstop=2 shiftwidth=2 softtabstop=2
 
 if $COLORTERM == 'truecolor'
   set termguicolors
@@ -45,9 +47,10 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 plug#begin('~/.vim/pack/packager/start')
-# Navigation and search
+# Navigation, search, language features
 Plug 'girishji/scope.vim'
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
+Plug 'dense-analysis/ale'
 Plug 'github/copilot.vim'
 # Version control
 Plug 'tpope/vim-fugitive'
@@ -68,18 +71,20 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-    aleSupport: v:false,
+    aleSupport: v:true,
     autoHighlight: v:true,
     autoPopulateDiags: v:true,
+		diagVirtualTextAlign: 'after',
     noNewlineInCompletion: v:true,
     outlineOnRight: v:true,
     outlineWinSize: 50,
     semanticHighlight: v:true,
-    showDiagInBaloon: v:true,
-    showDiagWithVirtualText: v:false,
+    showDiagInBaloon: v:false,
+    showDiagWithVirtualText: v:true,
     showInlayHints: v:true,
     showSignature: v:true,
-    usePopupInCodeAction: v:true,
+    echoSignature: v:true,
+    usePopupInCodeAction: v:false,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
@@ -99,6 +104,7 @@ var lspServers = [
     workspaceConfig: { completion: v:true, validate: v:true, schemaStore: { enable: v:true, url: 'https://www.schemastore.org/api/json/catalog.json' } },
   },
   { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+  { name: 'cssls', filetype: ['css', 'scss'], path: 'css-languageserver', args: ['--stdio'] },
 ]
 autocmd VimEnter * call LspAddServer(lspServers)
 
@@ -127,14 +133,39 @@ def ToggleLspOutline()
 enddef
 
 nnoremap gd :LspGotoDefinition<CR>
-nnoremap ]e :LspDiag next<CR>
-nnoremap [e :LspDiag prev<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
-nnoremap <leader>L :LspFormat<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
+
+#--- ALE settings --------------------------------------------------------------------"
+# Show linting errors with highlights
+g:ale_set_signs = 1
+g:ale_set_highlights = 1
+g:ale_virtualtext_cursor = 1
+# Change highlight style when color scheme is sourced
+augroup ALEHighlights
+  autocmd!
+  autocmd ColorScheme * highlight link ALEError ErrorMsg
+augroup END
+# Set linters for individual filetypes
+g:ale_linters = {'python': ['ruff', 'mypy', 'pylsp']}
+# Specify fixers for individual filetypes
+g:ale_fixers = {
+  '*': ['trim_whitespace'],
+  'python': ['ruff'],
+}
+# Show info, warnings, and errors; Write which linter produced the message
+g:ale_lsp_show_message_severity = 'information'
+g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
+# Specify Containerfiles as Dockerfiles
+g:ale_linter_aliases = {"Containerfile": "dockerfile"}
+
+# Mapping to run fixers on file and navigate between errors
+nnoremap <leader>L :ALEFix<CR>
+nnoremap ]e :ALENextWrap<CR>
+nnoremap [e :ALEPreviousWrap<CR>
 
 #--- Scope Settings ------------------------------------------------------------"
 import autoload 'scope/fuzzy.vim'
@@ -193,7 +224,9 @@ nnoremap <leader>tl :TestLast \| cope<CR>
 g:test#strategy = "dispatch"
 g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
+g:test#python#runner = 'pyunit'
 g:test#go#gotest#executable = 'go test -v'
+
 
 #--- DadBod Settings ------------------------------------------------------------------"
 g:db_ui_auto_execute_table_helpers = 1
