@@ -96,6 +96,10 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 var lspServers = [
   { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
   { name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+  { 
+    name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: v:true,
+    initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true } } },
+  },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
   { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
   { name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
@@ -174,6 +178,7 @@ nnoremap <leader>p <scriptcmd>fuzzy.GitFile()<CR>
 nnoremap <leader>F <scriptcmd>fuzzy.Grep('ag --vimgrep')<CR>
 nnoremap <leader>b <scriptcmd>fuzzy.Buffer()<CR>
 nnoremap <leader>K <scriptcmd>fuzzy.Command()<CR>
+nnoremap <leader>Q <scriptcmd>fuzzy.CmdHistory()<CR>
 nnoremap <leader>h <scriptcmd>fuzzy.HelpfilesGrep()<CR>
 nnoremap <leader>O <scriptcmd>fuzzy.LspDocumentSymbol()<CR>
 nnoremap <leader><leader> <scriptcmd>fuzzy.Keymap()<CR>
