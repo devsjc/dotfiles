@@ -1,0 +1,35 @@
+format = """
+$username\
+$hostname\
+$directory\
+$git_branch\
+$git_state\
+$git_status\
+$python\
+$cmd_duration\
+$character"""
+
+[directory]
+style = 'blue'
+truncate_to_repo = false
+truncation_length = 4
+truncation_symbol = '…/'
+
+[git_branch]
+style = 'green'
+symbol = '  '
+[git_status]
+style = 'blue'
+format = '([$all_status$ahead_behind]($style))'
+untracked = '[?$count](blue) '
+staged = '[+$count](yellow) '
+ahead = '[⇡$count](green) '
+behind = '[⇣$count](red) '
+
+[cmd_duration]
+style = 'cyan'
+format = '[$duration]($style) '
+
+[python]
+style = 'cyan'
+symbol = ''
