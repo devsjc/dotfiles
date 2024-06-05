@@ -9,6 +9,9 @@ $python\
 $cmd_duration\
 $character"""
 
+[hostname]
+ssh_symbol = " "
+
 [directory]
 style = 'blue'
 truncate_to_repo = false
@@ -33,3 +36,11 @@ format = '[$duration]($style) '
 [python]
 style = 'cyan'
 symbol = ''
+
+[os.symbols]
+Debian = " "
+Macos = " "
+Android = " "
+
+[rust]
+symbol = " "
