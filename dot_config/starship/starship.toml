@@ -12,7 +12,7 @@ right_format = """
 $cmd_duration\
 $conda\
 $rust\
-$go\
+$golang\
 $time"""
 
 [hostname]
@@ -46,6 +46,7 @@ symbol = ' '
 
 [conda]
 style = 'cyan'
+format = '[$symbol$environment]($style) '
 symbol = ' '
 
 [os]
@@ -56,10 +57,17 @@ Debian = " "
 Macos = " "
 Android = " "
 
+[golang]
+style = 'blue'
+format = '[$symbol($version )]($style)'
+symbol = ' '
+
 [rust]
+style = 'red'
+format = '[$symbol($version )]($style)'
 symbol = " "
 
 [time]
 disabled = false
 style = 'cyan'
-format = 'at [ $time]($style) '
+format = 'at [ $time]($style)'
