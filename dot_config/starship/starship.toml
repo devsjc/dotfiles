@@ -1,19 +1,26 @@
 format = """
+$os\
 $username\
 $hostname\
 $directory\
 $git_branch\
 $git_state\
 $git_status\
-$python\
-$cmd_duration\
 $character"""
+
+right_format = """
+$cmd_duration\
+$conda\
+$rust\
+$go\
+$time"""
 
 [hostname]
 ssh_symbol = " "
 
 [directory]
 style = 'blue'
+format = '[ $path]($style)[$read_only]($read_only_style) '
 truncate_to_repo = false
 truncation_length = 4
 truncation_symbol = '…/'
@@ -27,16 +34,23 @@ format = '([$all_status$ahead_behind]($style))'
 untracked = '[?$count](blue) '
 staged = '[+$count](yellow) '
 ahead = '[⇡$count](green) '
-behind = '[⇣$count](red) '
+behind = '[⇣$count](green) '
 
 [cmd_duration]
-style = 'cyan'
-format = '[$duration]($style) '
+style = 'yellow'
+format = 'took [ $duration]($style) '
 
 [python]
 style = 'cyan'
-symbol = ''
+symbol = ' '
 
+[conda]
+style = 'cyan'
+symbol = ' '
+
+[os]
+style = 'bold white'
+disabled = false
 [os.symbols]
 Debian = " "
 Macos = " "
@@ -44,3 +58,8 @@ Android = " "
 
 [rust]
 symbol = " "
+
+[time]
+disabled = false
+style = 'cyan'
+format = 'at [ $time]($style) '
