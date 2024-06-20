@@ -14,9 +14,10 @@ g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$'
 nnoremap <leader>1 :Lexplore %:p:h<CR>
 syntax enable
 filetype plugin indent on
-set tabstop=4 softtabstop=4 shiftwidth=4 expandtab
+set tabstop=4 shiftwidth=4 softtabstop=-1 expandtab
 set hlsearch incsearch ignorecase
 set number relativenumber 
+set breakindent smartindent
 set wrap linebreak
 set encoding=UTF-8
 set updatetime=100
@@ -25,11 +26,9 @@ set termwinsize=10x0
 set undofile undodir=~/.local/state/vim/undo
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
-autocmd FileType html setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType terraform setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType vim setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType css setlocal tabstop=2 shiftwidth=2 softtabstop=2
-autocmd FileType scss setlocal tabstop=2 shiftwidth=2 softtabstop=2
+for ft in ['html', 'vim', 'terraform', 'css']
+  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2'
+endfor
 
 if $COLORTERM == 'truecolor'
   set termguicolors
@@ -72,9 +71,9 @@ plug#end()
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
     aleSupport: v:true,
-    autoHighlight: v:true,
+    #autoHighlight: v:true,
     autoPopulateDiags: v:true,
-		diagVirtualTextAlign: 'after',
+	diagVirtualTextAlign: 'after',
     noNewlineInCompletion: v:true,
     outlineOnRight: v:true,
     outlineWinSize: 50,
@@ -82,9 +81,6 @@ var lspOptions = {
     showDiagInBaloon: v:false,
     showDiagWithVirtualText: v:true,
     showInlayHints: v:true,
-    showSignature: v:true,
-    echoSignature: v:true,
-    usePopupInCodeAction: v:false,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
