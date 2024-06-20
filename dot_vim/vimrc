@@ -17,14 +17,12 @@ filetype plugin indent on
 set tabstop=4 shiftwidth=4 softtabstop=-1 expandtab
 set hlsearch incsearch ignorecase
 set number relativenumber 
-set breakindent smartindent
-set wrap linebreak
+set breakindent smartindent wrap linebreak
 set encoding=UTF-8
 set updatetime=100
 set splitbelow splitright
-set termwinsize=10x0
 set undofile undodir=~/.local/state/vim/undo
-set wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
+set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 for ft in ['html', 'vim', 'terraform', 'css']
@@ -50,7 +48,6 @@ plug#begin('~/.vim/pack/packager/start')
 # Navigation, search, language features
 Plug 'girishji/scope.vim'
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
-Plug 'dense-analysis/ale'
 Plug 'github/copilot.vim'
 # Version control
 Plug 'tpope/vim-fugitive'
@@ -71,16 +68,12 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-    aleSupport: v:true,
-    #autoHighlight: v:true,
     autoPopulateDiags: v:true,
-	diagVirtualTextAlign: 'after',
     noNewlineInCompletion: v:true,
     outlineOnRight: v:true,
     outlineWinSize: 50,
     semanticHighlight: v:true,
-    showDiagInBaloon: v:false,
-    showDiagWithVirtualText: v:true,
+    showDiagWithSign: v:false,
     showInlayHints: v:true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
@@ -98,24 +91,10 @@ var lspServers = [
     initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true } } },
   },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-  { name: 'vimls', filetype: ['vim'], path: 'vim-language-server', args: ['--stdio'] },
-  {
-    name: 'yaml-ls', filetype: ['yaml', 'yml'], path: 'yaml-language-server', args: ['--stdio'],
-    workspaceConfig: { completion: v:true, validate: v:true, schemaStore: { enable: v:true, url: 'https://www.schemastore.org/api/json/catalog.json' } },
-  },
-  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
-  { name: 'cssls', filetype: ['css', 'scss'], path: 'css-languageserver', args: ['--stdio'] },
+  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [], features: {documentFormatting: false, codeAction: false} },
+  { name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [],  },
 ]
-autocmd VimEnter * call LspAddServer(lspServers)
-
-# Enable auto selection of the fist autocomplete item
-#augroup LspSetup
-#    au!
-#    au User LspAttached set completeopt-=noselect
-#augroup END
-# Disable newline on selecting completion option
-#inoremap <expr> <CR> pumvisible() ? "\<C-Y>" : "\<CR>"
+autocmd User LspSetup call LspAddServer(lspServers)
 
 # Link inlay hints to the conceal group
 highlight link LspInlayHint Conceal
@@ -139,34 +118,9 @@ nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
-
-#--- ALE settings --------------------------------------------------------------------"
-# Show linting errors with highlights
-g:ale_set_signs = 1
-g:ale_set_highlights = 1
-g:ale_virtualtext_cursor = 1
-# Change highlight style when color scheme is sourced
-augroup ALEHighlights
-  autocmd!
-  autocmd ColorScheme * highlight link ALEError ErrorMsg
-augroup END
-# Set linters for individual filetypes
-g:ale_linters = {'python': ['ruff', 'mypy', 'pylsp']}
-# Specify fixers for individual filetypes
-g:ale_fixers = {
-  '*': ['trim_whitespace'],
-  'python': ['ruff'],
-}
-# Show info, warnings, and errors; Write which linter produced the message
-g:ale_lsp_show_message_severity = 'information'
-g:ale_echo_msg_format = '[%linter%] [%severity%:%code%] %s'
-# Specify Containerfiles as Dockerfiles
-g:ale_linter_aliases = {"Containerfile": "dockerfile"}
-
-# Mapping to run fixers on file and navigate between errors
-nnoremap <leader>L :ALEFix<CR>
-nnoremap ]e :ALENextWrap<CR>
-nnoremap [e :ALEPreviousWrap<CR>
+nnoremap ]e :LspDiagNext<CR>
+nnoremap [e :LspDiagPrev<CR>
+nnoremap <leader>L :LspFormat<CR>
 
 #--- Scope Settings ------------------------------------------------------------"
 import autoload 'scope/fuzzy.vim'
