@@ -26,7 +26,7 @@ set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 for ft in ['html', 'vim', 'terraform', 'css']
-  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2'
+  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
 endfor
 
 if $COLORTERM == 'truecolor'
@@ -68,19 +68,19 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-    autoPopulateDiags: v:true,
-    noNewlineInCompletion: v:true,
-    outlineOnRight: v:true,
-    outlineWinSize: 50,
-    semanticHighlight: v:true,
-    showDiagWithSign: v:false,
-    showInlayHints: v:true,
+  autoPopulateDiags: v:true,
+  noNewlineInCompletion: v:true,
+  outlineOnRight: v:true,
+  outlineWinSize: 50,
+  semanticHighlight: v:true,
+  showDiagWithSign: v:false,
+  showInlayHints: v:true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
 # Install LSP servers via:
 # go install golang.org/x/tools/gopls@latest
-# python -m pip install -y python-lsp-server pylsp-mypy ruff-lsp
+# python -m pip install -y python-lsp-server pylsp-mypy python-lsp-ruff
 # npm install -g dart-language-server vim-language-server typescript typescript-language-server vscode-langservers-extracted
 # brew install marksman
 var lspServers = [
@@ -88,11 +88,13 @@ var lspServers = [
   { name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
   { 
     name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: v:true,
-    initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true } } },
+    initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true }}},
   },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [], features: {documentFormatting: false, codeAction: false} },
-  { name: 'ruff', filetype: ['python'], path: 'ruff-lsp', args: [],  },
+  { 
+    name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [],
+    initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }}}}}
+  },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
 
@@ -121,6 +123,7 @@ nnoremap <leader>P :LspSymbolSearch<CR>
 nnoremap ]e :LspDiagNext<CR>
 nnoremap [e :LspDiagPrev<CR>
 nnoremap <leader>L :LspFormat<CR>
+nnoremap <leader><CR> :LspCodeAction<CR>
 
 #--- Scope Settings ------------------------------------------------------------"
 import autoload 'scope/fuzzy.vim'
