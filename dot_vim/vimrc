@@ -74,6 +74,7 @@ var lspOptions = {
   outlineWinSize: 50,
   semanticHighlight: v:true,
   showDiagWithSign: v:false,
+  showSignature: v:true,
   showInlayHints: v:true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
@@ -95,6 +96,7 @@ var lspServers = [
     name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [],
     initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }}}}}
   },
+  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
 
