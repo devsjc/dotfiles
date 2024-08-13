@@ -122,8 +122,12 @@ export DB_UI_DEFAULT="postgresql://localhost:5432/postgres"
 export DB_UI_DAGSTER="postgresql://localhost:5432/dagster"
 export BAT_THEME="ansi"
 export CONDA_CHANGEPS1=false
+
+#--- Rust tootlchain -----------------------------------------------------------------
+
 export RUSTUP_HOME="${XDG_CONFIG_HOME}/rustup"
 export CARGO_HOME="${XDG_CACHE_HOME}/cargo"
+export PATH="${PATH}:${CARGO_HOME}/bin"
 
 # Vim keybindings
 bindkey -v
