@@ -34,8 +34,8 @@ if $COLORTERM == 'truecolor'
 endif
 
 def g:SynGroup()
-  let l:s = synID(line('.'), col('.'), 1)
-  echo synIDattr(l:s, 'name') . ' -> ' . synIDattr(synIDtrans(l:s), 'name')
+  var l = synID(line('.'), col('.'), 1)
+  echo synIDattr(l, 'name') .. ' -> ' .. synIDattr(synIDtrans(l), 'name')
 enddef
 
 #=== PLUGINS ==========================================================================
@@ -97,30 +97,21 @@ var lspServers = [
     initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }}}}}
   },
   { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+  { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
+    initializationOptions: { settings: { yaml: { 
+    schemaStore: { enable: v:true }, completion: { enable: v:true }, format: { enable: v:true }, hover: { enable: v:true }}}},
+  },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
 
 # Link inlay hints to the conceal group
 highlight link LspInlayHint Conceal
 
-# Enable toggling of outline window
-def ToggleLspOutline()
-  var winid = bufwinid('LSP-Outline')
-    if winid == -1
-        LspOutline
-    else
-      var winnr = win_id2win(winid)
-      if winnr > 0
-        execute winnr.'wincmd c'
-      endif
-    endif
-enddef
-
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
 nnoremap <leader>R :LspRename<CR>
-nnoremap <silent> <leader>3 :call ToggleLspOutline()<CR>
+nnoremap <leader>3 :LspOutline<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
 nnoremap ]e :LspDiagNext<CR>
 nnoremap [e :LspDiagPrev<CR>
