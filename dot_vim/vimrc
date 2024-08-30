@@ -6,11 +6,6 @@ source $VIMRUNTIME/defaults.vim
 
 g:mapleader = ' '      # Set the leader key to space
 
-g:netrw_liststyle = 3
-g:netrw_localcopydircmd = 'cp -r'
-g:netrw_winsize = 30
-g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$'
-
 nnoremap <leader>1 :Lexplore %:p:h<CR>
 syntax enable
 filetype plugin indent on
@@ -37,6 +32,19 @@ def g:SynGroup()
   var l = synID(line('.'), col('.'), 1)
   echo synIDattr(l, 'name') .. ' -> ' .. synIDattr(synIDtrans(l), 'name')
 enddef
+
+# --- Netrw settings-----------------------------------------------------------------
+g:netrw_liststyle = 3
+g:netrw_fastbrowse = 0
+g:netrw_localcopydircmd = 'cp -r'
+g:netrw_winsize = 30
+g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$,*/_trial_temp*"'
+
+augroup netrw
+  autocmd!
+  autocmd FileType netrw setlocal bufhidden=wipe
+augroup end
+
 
 #=== PLUGINS ==========================================================================
 
@@ -178,7 +186,6 @@ g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
 g:test#go#gotest#executable = 'go test -v'
-
 
 #--- DadBod Settings ------------------------------------------------------------------"
 g:db_ui_auto_execute_table_helpers = 1
