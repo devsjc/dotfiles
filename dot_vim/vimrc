@@ -102,7 +102,7 @@ var lspServers = [
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
   { 
     name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [],
-    initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }}}}}
+    initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }, pylsp_mypy: { report_progress: true }}}}}
   },
   { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
   { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
