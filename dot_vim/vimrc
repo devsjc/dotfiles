@@ -90,11 +90,15 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 # Install LSP servers via:
 # go install golang.org/x/tools/gopls@latest
 # python -m pip install -y python-lsp-server pylsp-mypy python-lsp-ruff
-# npm install -g dart-language-server vim-language-server typescript typescript-language-server vscode-langservers-extracted
+# npm install -g dart-language-server vim-language-server typescript \
+# typescript-language-server vscode-langservers-extracted sql-language-server
 # brew install marksman
 var lspServers = [
   { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
-  { name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true },
+  {
+    name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true,
+    initializationOptions: { settings: { gopls: { analyses: { formatting: { gofumpt: v:true }}, ui: { semanticTokens: v:true }}}},
+  },
   { 
     name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: v:true,
     initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true }}},
@@ -108,6 +112,12 @@ var lspServers = [
   { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
     initializationOptions: { settings: { yaml: { 
     schemaStore: { enable: v:true }, completion: { enable: v:true }, format: { enable: v:true }, hover: { enable: v:true }}}},
+  },
+  {
+    name: 'sql-language-server', filetype: ['sql'], path: 'sql-language-server', args: ['up', '--method', 'stdio'],
+    initializationOptions: { settings: { sqlLanguageServer: { connections: [
+      { name: "postgres", adapter: "postgres", host: "localhost", port: 5432, user: "postgres", database: "fcfs" }
+    ]}}},
   },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
