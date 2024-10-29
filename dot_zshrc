@@ -83,8 +83,10 @@ function update_plugins() {
 # Install if not already installed
 if [[ ! -x "$(command -v fzf)" ]]; then
   $PKG_MGR install fzf
-  source <(fzf --zsh)
 fi
+
+# Autocompletion and key bindings
+source <(fzf --zsh)
 
 # Set the default command to use fd
 export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
