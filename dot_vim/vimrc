@@ -66,7 +66,8 @@ Plug 'ap/vim-css-color'
 Plug 'devsjc/vim-jb'
 # Helpers
 Plug '907th/vim-auto-save'
-Plug 'tpope/vim-dispatch'
+Plug 'preservim/vimux'
+Plug 'christoomey/vim-tmux-navigator'
 Plug 'janko-m/vim-test'
 Plug 'mbbill/undotree'
 # SQL navigation
@@ -196,7 +197,7 @@ nnoremap <leader>tf :TestFile \| cope<CR>
 nnoremap <leader>ts :TestSuite \| cope<CR>
 nnoremap <leader>tl :TestLast \| cope<CR>
 
-g:test#strategy = "dispatch"
+g:test#strategy = "vimux"
 g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
