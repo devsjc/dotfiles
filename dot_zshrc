@@ -48,8 +48,27 @@ HISTSIZE=10000
 SAVEHIST=10000
 setopt appendhistory
 
+#=== TOOLS ===========================================================================
+
+#--- FZF -----------------------------------------------------------------------------
+# Install if not already installed
+if [[ ! -x "$(command -v fzf)" ]]; then
+  $PKG_MGR install fzf
+fi
+
+# Set the default command to use fd
+export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
+
+#--- UV  -----------------------------------------------------------------------------
+if [[ ! -x "$(command -v uv)" ]]; then
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    uv venv ~/.venv && export PATH="$PATH:$HOME/.venv/bin"
+    uv pip install --python "$HOME/.venv/bin/python" python-lsp-server pylsp-mypy python-lsp-ruff
+fi
+
 #=== PLUGINS =========================================================================
 
+#--- Plugin Management ---------------------------------------------------------------
 # Create plugin folder if it doesn't exist and add it to the fpath
 if [[ ! -d "${XDG_DATA_HOME}/zsh-custom" ]]; then
   mkdir -p "${XDG_DATA_HOME}/zsh-custom"
@@ -79,26 +98,10 @@ function update_plugins() {
   done
 }
 
-#--- FZF -----------------------------------------------------------------------------
-# Install if not already installed
-if [[ ! -x "$(command -v fzf)" ]]; then
-  $PKG_MGR install fzf
-fi
-
-
-# Set the default command to use fd
-export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
-
-#--- ZSH Autosuggestions --------------------------------------------------------------
+#--- Plugins ---------- --------------------------------------------------------------
 source_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
-
-#--- ZSH-Z ---------------------------------------------------------------------------
 source_plugin "zsh-z" "https://github.com/agkozak/zsh-z"
-
-#--- ZSH Syntax Highlighting ---------------------------------------------------------
 source_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
-
-#--- Powerlevel10k -------------------------------------------------------------------
 source_plugin "powerlevel10k" "https://github.com/romkatv/powerlevel10k"
 
 # Enable Powerlevel10k instant prompt.
@@ -160,7 +163,7 @@ dudir() {
   du -ha $1 | sort -h | tail -22
 }
 
-#--- Epilogue ----------------------------------------------------------------------
+#=== Epilogue ======================================================================
 #
 # Autocompletion and key bindings
 source <(fzf --zsh)
