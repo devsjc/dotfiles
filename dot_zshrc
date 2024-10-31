@@ -85,8 +85,6 @@ if [[ ! -x "$(command -v fzf)" ]]; then
   $PKG_MGR install fzf
 fi
 
-# Autocompletion and key bindings
-source <(fzf --zsh)
 
 # Set the default command to use fd
 export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
@@ -162,3 +160,7 @@ dudir() {
   du -ha $1 | sort -h | tail -22
 }
 
+#--- Epilogue ----------------------------------------------------------------------
+#
+# Autocompletion and key bindings
+source <(fzf --zsh)
