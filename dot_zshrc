@@ -129,7 +129,6 @@ export BAT_THEME="ansi"
 
 export RUSTUP_HOME="${XDG_CONFIG_HOME}/rustup"
 export CARGO_HOME="${XDG_CACHE_HOME}/cargo"
-export PATH="${PATH}:${CARGO_HOME}/bin"
 
 # Vim keybindings
 bindkey -v
@@ -162,8 +161,15 @@ zarr_ls() {
 dudir() {
   du -ha $1 | sort -h | tail -22
 }
+pathadd() {
+  if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+    PATH="${PATH:+"$PATH:"}$1"
+  fi
+}
 
 #=== Epilogue ======================================================================
 #
 # Autocompletion and key bindings
 source <(fzf --zsh)
+pathadd "${SBINS_HOME}/bin"
+pathadd "${CARGO_HOME}/bin"
