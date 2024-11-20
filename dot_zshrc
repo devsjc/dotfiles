@@ -62,7 +62,8 @@ export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
 #--- UV  -----------------------------------------------------------------------------
 if [[ ! -x "$(command -v uv)" ]]; then
     curl -LsSf https://astral.sh/uv/install.sh | sh
-    uv venv ~/.venv && export PATH="$PATH:$HOME/.venv/bin"
+    uv venv ~/.venv
+    export PATH="$PATH:$HOME/.venv/bin"
     uv pip install --python "$HOME/.venv/bin/python" python-lsp-server pylsp-mypy python-lsp-ruff
 fi
 
