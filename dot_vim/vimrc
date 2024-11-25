@@ -172,7 +172,7 @@ g:auto_save_events = ["InsertLeave", "TextChanged"]
 # Disable auto-save for SQL files
 augroup ft_sql
   au!
-  au FileType sal let b:auto_save = 0
+  au FileType sql let b:auto_save = 0
 augroup END
 
 #--- Polyglot settings ----------------------------------------------------------------"
