@@ -197,7 +197,7 @@ nnoremap <leader>tf :TestFile \| cope<CR>
 nnoremap <leader>ts :TestSuite \| cope<CR>
 nnoremap <leader>tl :TestLast \| cope<CR>
 
-g:test#strategy = "vimux"
+g:test#strategy = "basic"
 g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
