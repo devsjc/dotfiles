@@ -1,0 +1,21 @@
+[general]
+import = [
+    "~/.config/alacritty/themes/afterglow.toml",
+]
+live_config_reload = true
+
+[env]
+term = "xterm-256color"
+
+[window]
+decorations = "None"
+padding = { x = 4, y = 1 }
+
+[font]
+# For thinner fonts on MacOS, run the following:
+# $ defaults write org.alacritty AppleFontSmoothing -int 0
+# (see https://github.com/alacritty/alacritty/issues/4616)
+normal = { family = "FiraMono Nerd Font Mono", style = "Regular" }
+size = 13.0
+offset = { x = 0, y = 8 }
+
