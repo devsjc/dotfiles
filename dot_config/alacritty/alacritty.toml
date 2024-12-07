@@ -17,5 +17,8 @@ padding = { x = 4, y = 1 }
 # (see https://github.com/alacritty/alacritty/issues/4616)
 normal = { family = "JetBrainsMono Nerd Font Mono", style = "Regular" }
 size = 13.0
-offset = { x = 0, y = 8 }
+offset = { x = 0, y = 6 }
 
+[terminal.shell]
+program = "/bin/zsh"
+args = ["-l", "-c", "tmux new-session -A -s local"]
