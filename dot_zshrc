@@ -165,5 +165,6 @@ pathadd() {
 #
 # Autocompletion and key bindings
 source <(fzf --zsh)
+eval "$(uv generate-shell-completion zsh)"
 pathadd "${SBINS_HOME}/bin"
 pathadd "${CARGO_HOME}/bin"
