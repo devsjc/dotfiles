@@ -168,3 +168,4 @@ source <(fzf --zsh)
 eval "$(uv generate-shell-completion zsh)"
 pathadd "${SBINS_HOME}/bin"
 pathadd "${CARGO_HOME}/bin"
+pathadd "${XDG_BIN_HOME}"
