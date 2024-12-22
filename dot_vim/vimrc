@@ -48,6 +48,7 @@ augroup end
 
 #=== PLUGINS ==========================================================================
 
+# Automatically download vim-plug if not present
 if empty(glob('~/.vim/autoload/plug.vim'))
   execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 endif
@@ -66,10 +67,9 @@ Plug 'ap/vim-css-color'
 Plug 'devsjc/vim-jb'
 # Helpers
 Plug '907th/vim-auto-save'
-Plug 'preservim/vimux'
 Plug 'christoomey/vim-tmux-navigator'
+Plug 'tpope/vim-dispatch'
 Plug 'janko-m/vim-test'
-Plug 'mbbill/undotree'
 # SQL navigation
 Plug 'tpope/vim-dadbod'
 Plug 'kristijanhusak/vim-dadbod-ui'
@@ -197,7 +197,7 @@ nnoremap <leader>tf :TestFile \| cope<CR>
 nnoremap <leader>ts :TestSuite \| cope<CR>
 nnoremap <leader>tl :TestLast \| cope<CR>
 
-g:test#strategy = "basic"
+g:test#strategy = "dispatch"
 g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
