@@ -118,12 +118,14 @@ alt-b = 'workspace B'
 alt-m = 'workspace M'
 alt-t = 'workspace T'
 alt-d = 'workspace D'
+alt-p = 'workspace P'
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#move-node-to-workspace
 alt-shift-b = ['move-node-to-workspace B', 'workspace B']
 alt-shift-m = ['move-node-to-workspace M', 'workspace M']
 alt-shift-t = ['move-node-to-workspace T', 'workspace T']
 alt-shift-d = ['move-node-to-workspace D', 'workspace D']
+alt-shift-p = ['move-node-to-workspace P', 'workspace P']
 
 # See: https://nikitabobko.github.io/AeroSpace/commands#workspace-back-and-forth
 alt-tab = 'workspace-back-and-forth'
