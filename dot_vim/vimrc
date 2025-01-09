@@ -70,9 +70,6 @@ Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
 Plug 'janko-m/vim-test'
-# SQL navigation
-Plug 'tpope/vim-dadbod'
-Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
@@ -169,11 +166,6 @@ set noswapfile
 g:auto_save = 1
 g:auto_save_silent = 1
 g:auto_save_events = ["InsertLeave", "TextChanged"]
-# Disable auto-save for SQL files
-augroup ft_sql
-  au!
-  au FileType sql let b:auto_save = 0
-augroup END
 
 #--- Polyglot settings ----------------------------------------------------------------"
 g:polyglot_disabled = ['sensible']
@@ -202,15 +194,6 @@ g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
 g:test#go#gotest#executable = 'go test -v'
-
-#--- DadBod Settings ------------------------------------------------------------------"
-g:db_ui_auto_execute_table_helpers = 1
-g:db_ui_winwidth = 40
-g:db_ui_table_helpers = {
-   'postgresql': {
-     'Count': 'select count(*) from {dbname}.{table}',
-   }
-}
 
 #--- Colorscheme settings -----------------------------------------------------------------"
 g:jb_style = 'dark'
