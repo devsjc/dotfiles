@@ -114,7 +114,6 @@ export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
 #=== USER CONFIGURATION ===============================================================
 
 export EDITOR='vim'
-export HOMEBREW_AUTOREMOVE=1
 export DB_UI_DEFAULT="postgresql://localhost:5432/postgres"
 export DB_UI_DAGSTER="postgresql://localhost:5432/dagster"
 export BAT_THEME="ansi"
