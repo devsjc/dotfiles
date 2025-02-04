@@ -70,6 +70,8 @@ Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
 Plug 'janko-m/vim-test'
+Plug 'tpope/vim-dadbod'
+Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
@@ -194,6 +196,9 @@ g:test#python#pytest#executable = 'python -m pytest -rA'
 g:test#python#pyunit#executable = 'python -m unittest --buffer'
 g:test#python#runner = 'pyunit'
 g:test#go#gotest#executable = 'go test -v'
+
+#--- DadBodUI Settings --------------------------------------------------------------------"
+g:db_ui_execute_on_save = 0
 
 #--- Colorscheme settings -----------------------------------------------------------------"
 g:jb_style = 'dark'
