@@ -4,15 +4,37 @@
 	email = 47188100+devsjc@users.noreply.github.com
 [push]
 	autoSetupRemote = true
+    followTags = true
+[pull]
+    rebase = true
+[rebase]
+    autoStash = true
+    autoSquash = true
+    updateRefs = true
+[fetch]
+    prune = true
+    pruneTags = true
+[column]
+    ui = auto
+[branch]
+    sort = -committerdate
+[tag]
+    sort = version:refname
+[diff]
+    algorithm = histogram
+    colorMoved = plain
+    mnemonicPrefix = true
+    renames = true
 [alias]
 	prune-all = !git remote | xargs -n 1 git remote prune
 	cam = commit -am
 	co = checkout
 	cb = checkout -b
-	tl = tag --sort=-v:refname -n --list
-	lol = log --graph --decorate --pretty=oneline --abbrev-commit
-	lols = log --graph --stat
-	lola = log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%ar) %C(bold blue)<%an>%Creset" --all
+    hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+[apply]
+    whitespace = fix
+[log]
+    date = iso-local
 [init]
 	defaultBranch = main
 [core]
