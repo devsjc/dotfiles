@@ -24,6 +24,8 @@ for ft in ['html', 'vim', 'terraform', 'css']
   execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
 endfor
 
+autocmd FileType go colorscheme sonokai
+
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
@@ -65,6 +67,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'bluz71/vim-mistfly-statusline'
 Plug 'ap/vim-css-color'
 Plug 'devsjc/vim-jb'
+Plug 'sainnhe/sonokai'
 # Helpers
 Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
@@ -97,7 +100,10 @@ var lspServers = [
   { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
   {
     name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true,
-    initializationOptions: { settings: { gopls: { analyses: { formatting: { gofumpt: v:true }}, ui: { semanticTokens: v:true }}}},
+    workspaceConfig: { gopls: {
+      "ui.semanticTokens": v:true, "formatting.gofumpt": v:true,
+      hints: { assignVariableTypes: v:true, functionTypeParameters: v:true, parameterNames: v:true },
+    }},
   },
   { 
     name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: v:true,
