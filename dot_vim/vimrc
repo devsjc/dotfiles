@@ -24,8 +24,6 @@ for ft in ['html', 'vim', 'terraform', 'css']
   execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
 endfor
 
-autocmd FileType go colorscheme sonokai
-
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
@@ -209,5 +207,5 @@ g:db_ui_execute_on_save = 0
 #--- Colorscheme settings -----------------------------------------------------------------"
 g:jb_style = 'dark'
 g:jb_enable_unicode = 1
-colorscheme jb
+colorscheme sonokai
 
