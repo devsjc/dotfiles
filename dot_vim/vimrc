@@ -156,13 +156,9 @@ nnoremap <leader><leader> <scriptcmd>fuzzy.Keymap()<CR>
 nnoremap <leader><Tab> <C-^><CR>
 
 #--- Fugitive settings ----------------------------------------------------------------"
-nnoremap <leader>ga :Gwrite<CR>
-nnoremap <leader>gc :Git commit<CR>
-nnoremap <leader>gd :Git diff --minimal<CR>
-nnoremap <leader>gs :Git<CR>
-nnoremap <leader>gl :Git log --graph --oneline --decorate<CR>
-nnoremap <leader>gp :Git push<CR>
-nnoremap <leader>gh :0Gclog<CR>
+nnoremap <leader>gs :Git switch<CR>
+nnoremap <leader>gc :Git switch -c<CR>
+nnoremap <leader>gp :Git pull<CR>
 
 #--- AutoPairs settings ---------------------------------------------------------------"
 g:AutoPairsCompleteOnlyOnSpace = 1
