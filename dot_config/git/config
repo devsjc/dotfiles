@@ -26,11 +26,13 @@
     mnemonicPrefix = true
     renames = true
 [alias]
-	prune-all = !git remote | xargs -n 1 git remote prune
-	cam = commit -am
+    s = switch
+    sc = switch -c
 	co = checkout
 	cb = checkout -b
+	cam = commit -am
     hist = log --pretty=format:'%h %ad | %s%d [%an]' --graph --date=short
+	prune-all = !git remote | xargs -n 1 git remote prune
 [apply]
     whitespace = fix
 [log]
