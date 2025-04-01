@@ -122,6 +122,7 @@ export BAT_THEME="ansi"
 
 export RUSTUP_HOME="${XDG_CONFIG_HOME}/rustup"
 export CARGO_HOME="${XDG_CACHE_HOME}/cargo"
+export GOBIN_HOME="~/go/bin"
 
 # Vim keybindings
 bindkey -v
@@ -163,3 +164,4 @@ eval "$(uv generate-shell-completion zsh)"
 pathadd "${SBINS_HOME}/bin"
 pathadd "${CARGO_HOME}/bin"
 pathadd "${XDG_BIN_HOME}"
+pathadd "${GOBIN_HOME}"
