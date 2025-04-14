@@ -98,25 +98,34 @@ autocmd VimEnter * call LspOptionsSet(lspOptions)
 var lspServers = [
   { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
   {
-    name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'], syncInit: v:true,
+    name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
-      "ui.semanticTokens": v:true, "formatting.gofumpt": v:true,
-      hints: { assignVariableTypes: v:true, functionTypeParameters: v:true, parameterNames: v:true },
+      hints: {
+        assignVariableTypes: true, functionTypeParameters: true, parameterNames: true, constantValues: true,
+        compositeLiteralFields: true, compositeLiteralTypes: true, rangeVariableTypes: true,
+      },
+      directoryFilters: ["-**/node_modules", "-**/.git"],
+      analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true },
+      semanticTokens: true,
+      gofumpt: true,
+      usePlaceholders: true,
+      completeUnimported: true,
+      staticcheck: true,
     }},
   },
   { 
-    name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: v:true,
-    initializationOptions: { inlayHints: { typeHints: { enable: v:true }, parameterHints: { enable: v:true }}},
+    name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: true,
+    initializationOptions: { inlayHints: { typeHints: { enable: true }, parameterHints: { enable: true }}},
   },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
   { 
     name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [],
     initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }, pylsp_mypy: { report_progress: true }}}}}
   },
-  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: v:true },
+  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: true },
   { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
     initializationOptions: { settings: { yaml: { 
-    schemaStore: { enable: v:true }, completion: { enable: v:true }, format: { enable: v:true }, hover: { enable: v:true }}}},
+    schemaStore: { enable: true }, completion: { enable: true }, format: { enable: true }, hover: { enable: true }}}},
   },
   {
     name: 'sql-language-server', filetype: ['sql'], path: 'sql-language-server', args: ['up', '--method', 'stdio'],
