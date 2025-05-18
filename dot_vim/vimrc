@@ -118,10 +118,8 @@ var lspServers = [
     initializationOptions: { inlayHints: { typeHints: { enable: true }, parameterHints: { enable: true }}},
   },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
-  { 
-    name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [],
-    initializationOptions: { settings: { pylsp: { plugins: { ruff: { enabled: true, formatEnabled: true }, pylsp_mypy: { report_progress: true }}}}}
-  },
+  { name: 'ruff', filetype: ['python'], path: 'ruff', args: ['server'] },
+  { name: 'ty', filetype: ['python'], path: 'ty', args: ['server'] },
   { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: true },
   { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
     initializationOptions: { settings: { yaml: { 
