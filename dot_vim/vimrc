@@ -16,6 +16,7 @@ set updatetime=100
 set splitbelow splitright
 set autowriteall autoread undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
+set noshowmode laststatus=2
 nnoremap <leader>1 :Lexplore %:p:h<CR>
 nnoremap <leader><Tab> <C-^><CR>
 
@@ -132,10 +133,6 @@ nnoremap [h <Plug>(GitGutterPrevHunk)
 g:gitgutter_sign_added = '┃'
 g:gitgutter_sign_modified = '┃'
 g:gitgutter_sign_removed = '┃'
-
-#--- Statusbar settings ------------------------------------------------------"
-#Don't show the mode as it is present in statusline; always show the statusline
-set noshowmode laststatus=2
 
 #--- Vim Test settings ----------------------------------------------------------------"
 nnoremap <leader>tn :TestNearest \| cope<CR>
