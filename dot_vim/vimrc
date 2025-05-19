@@ -6,9 +6,7 @@ source $VIMRUNTIME/defaults.vim
 
 g:mapleader = ' '      # Set the leader key to space
 
-nnoremap <leader>1 :Lexplore %:p:h<CR>
 syntax enable
-filetype plugin indent on
 set tabstop=4 shiftwidth=4 softtabstop=-1 expandtab
 set hlsearch incsearch ignorecase
 set number relativenumber 
@@ -18,6 +16,8 @@ set updatetime=100
 set splitbelow splitright
 set autowriteall autoread undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
+nnoremap <leader>1 :Lexplore %:p:h<CR>
+nnoremap <leader><Tab> <C-^><CR>
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
 for ft in ['html', 'vim', 'terraform', 'css']
@@ -27,11 +27,6 @@ endfor
 if $COLORTERM == 'truecolor'
   set termguicolors
 endif
-
-def g:SynGroup()
-  var l = synID(line('.'), col('.'), 1)
-  echo synIDattr(l, 'name') .. ' -> ' .. synIDattr(synIDtrans(l), 'name')
-enddef
 
 # --- Netrw settings-----------------------------------------------------------------
 g:netrw_liststyle = 3
@@ -64,8 +59,6 @@ Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 # UI modifications
 Plug 'bluz71/vim-mistfly-statusline'
-Plug 'ap/vim-css-color'
-Plug 'devsjc/vim-jb'
 Plug 'sainnhe/sonokai'
 # Helpers
 Plug '907th/vim-auto-save'
@@ -78,25 +71,13 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-  autoPopulateDiags: v:true,
-  noNewlineInCompletion: v:true,
-  outlineOnRight: v:true,
-  outlineWinSize: 50,
-  semanticHighlight: v:true,
-  showDiagWithSign: v:false,
-  showSignature: v:true,
-  showInlayHints: v:true,
+  autoPopulateDiags: v:true, noNewlineInCompletion: v:true, outlineOnRight: v:true,
+  outlineWinSize: 50, semanticHighlight: v:true, showDiagWithSign: v:false,
+  showSignature: v:true, showInlayHints: v:true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
-# Install LSP servers via:
-# go install golang.org/x/tools/gopls@latest
-# python -m pip install -y python-lsp-server pylsp-mypy python-lsp-ruff
-# npm install -g dart-language-server vim-language-server typescript \
-# typescript-language-server vscode-langservers-extracted sql-language-server
-# brew install marksman
 var lspServers = [
-  { name: 'dart', filetype: ['dart'], path: 'dart', args: ['language-server', '--client-id', 'vim'] },
   {
     name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
@@ -106,11 +87,7 @@ var lspServers = [
       },
       directoryFilters: ["-**/node_modules", "-**/.git"],
       analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true },
-      semanticTokens: true,
-      gofumpt: true,
-      usePlaceholders: true,
-      completeUnimported: true,
-      staticcheck: true,
+      semanticTokens: true, gofumpt: true, usePlaceholders: true, completeUnimported: true, staticcheck: true,
     }},
   },
   { 
@@ -120,22 +97,8 @@ var lspServers = [
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
   { name: 'ruff', filetype: ['python'], path: 'ruff', args: ['server'] },
   { name: 'ty', filetype: ['python'], path: 'ty', args: ['server'] },
-  { name: 'marksman', filetype: ['markdown'], path: 'marksman', args: ['server'], syncInit: true },
-  { name: 'yamlls', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'],
-    initializationOptions: { settings: { yaml: { 
-    schemaStore: { enable: true }, completion: { enable: true }, format: { enable: true }, hover: { enable: true }}}},
-  },
-  {
-    name: 'sql-language-server', filetype: ['sql'], path: 'sql-language-server', args: ['up', '--method', 'stdio'],
-    initializationOptions: { settings: { sqlLanguageServer: { connections: [
-      { name: "postgres", adapter: "postgres", host: "localhost", port: 5432, user: "postgres", database: "fcfs" }
-    ]}}},
-  },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
-
-# Link inlay hints to the conceal group
-highlight link LspInlayHint Conceal
 
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap <leader>r :LspShowReferences<CR>
@@ -154,14 +117,6 @@ nnoremap <leader>p :GFiles<CR>
 nnoremap <leader>F :Rg<CR>
 nnoremap <leader>b :Buffers<CR>
 
-# Map buffer quick switch keys
-nnoremap <leader><Tab> <C-^><CR>
-
-#--- Fugitive settings ----------------------------------------------------------------"
-nnoremap <leader>gs :Git switch<CR>
-nnoremap <leader>gc :Git switch -c<CR>
-nnoremap <leader>gp :Git pull<CR>
-
 #--- AutoPairs settings ---------------------------------------------------------------"
 g:AutoPairsCompleteOnlyOnSpace = 1
 
@@ -171,17 +126,12 @@ g:auto_save = 1
 g:auto_save_silent = 1
 g:auto_save_events = ["InsertLeave", "TextChanged"]
 
-#--- Polyglot settings ----------------------------------------------------------------"
-g:polyglot_disabled = ['sensible']
-
-#--- Go settings ----------------------------------------------------------------------"
-g:go_highlight_generate_tags = 1
-g:go_highlight_build_constraints = 1
-g:go_highlight_extra_types = 1
-
 #--- GitGutter settings ---------------------------------------------------------------"
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
+g:gitgutter_sign_added = '┃'
+g:gitgutter_sign_modified = '┃'
+g:gitgutter_sign_removed = '┃'
 
 #--- Statusbar settings ------------------------------------------------------"
 #Don't show the mode as it is present in statusline; always show the statusline
@@ -203,7 +153,5 @@ g:test#go#gotest#executable = 'go test -v'
 g:db_ui_execute_on_save = 0
 
 #--- Colorscheme settings -----------------------------------------------------------------"
-g:jb_style = 'dark'
-g:jb_enable_unicode = 1
 colorscheme sonokai
 
