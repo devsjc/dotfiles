@@ -87,7 +87,7 @@ var lspServers = [
         compositeLiteralFields: true, compositeLiteralTypes: true, rangeVariableTypes: true,
       },
       directoryFilters: ["-**/node_modules", "-**/.git"],
-      analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true },
+      analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true, fillstructs: true },
       semanticTokens: true, gofumpt: true, usePlaceholders: true, completeUnimported: true, staticcheck: true,
     }},
   },
