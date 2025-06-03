@@ -72,9 +72,10 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-  autoPopulateDiags: v:true, noNewlineInCompletion: v:true, outlineOnRight: v:true,
-  outlineWinSize: 50, semanticHighlight: v:true, showDiagWithSign: v:false,
-  showSignature: v:true, showInlayHints: v:true,
+  autoHighlightDiags: true, autoPopulateDiags: true, echoSignature: true, ignoreMissingServer: true,
+  outlineOnRight: true, outlineWinSize: 50,
+  semanticHighlight: true, showDiagWithSign: false, showDiagWithVirtualText: true,
+  showInlayHints: false, showSignature: true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
@@ -83,12 +84,14 @@ var lspServers = [
     name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
       hints: {
-        assignVariableTypes: true, functionTypeParameters: true, parameterNames: true, constantValues: true,
-        compositeLiteralFields: true, compositeLiteralTypes: true, rangeVariableTypes: true,
+        assignVariableTypes: false, functionTypeParameters: false, parameterNames: true, constantValues: false,
+        compositeLiteralFields: false, compositeLiteralTypes: false, rangeVariableTypes: false,
       },
       directoryFilters: ["-**/node_modules", "-**/.git"],
       analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true, fillstructs: true },
-      semanticTokens: true, gofumpt: true, usePlaceholders: true, completeUnimported: true, staticcheck: true,
+      codelenses: { generate: true, regenerate_cgo: false, vendor: false },
+      semanticTokens: true, semanticTokenTypes: { string: true },
+      hoverKind: 'SingleLine', gofumpt: true, usePlaceholders: false, staticcheck: false, importShortcut: 'Definition',
     }},
   },
   { 
@@ -104,6 +107,7 @@ autocmd User LspSetup call LspAddServer(lspServers)
 nnoremap gd :LspGotoDefinition<CR>
 nnoremap <leader>r :LspShowReferences<CR>
 nnoremap <leader>i :LspGotoImplementation<CR>
+nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <leader>3 :LspOutline<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
@@ -135,10 +139,9 @@ g:gitgutter_sign_modified = '┃'
 g:gitgutter_sign_removed = '┃'
 
 #--- Vim Test settings ----------------------------------------------------------------"
-nnoremap <leader>tn :TestNearest \| cope<CR>
-nnoremap <leader>tf :TestFile \| cope<CR>
-nnoremap <leader>ts :TestSuite \| cope<CR>
-nnoremap <leader>tl :TestLast \| cope<CR>
+nnoremap <leader>tn :TestNearest<CR>
+nnoremap <leader>tf :TestFile<CR>
+nnoremap <leader>tl :TestLast<CR>
 
 g:test#strategy = "dispatch"
 g:test#python#pytest#executable = 'python -m pytest -rA'
