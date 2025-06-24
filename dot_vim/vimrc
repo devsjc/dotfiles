@@ -3,31 +3,18 @@ vim9script
 
 unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
-
 g:mapleader = ' '      # Set the leader key to space
-
-syntax enable
-set tabstop=4 shiftwidth=4 softtabstop=-1 expandtab
-set hlsearch incsearch ignorecase
-set number relativenumber 
+set tabstop=4 shiftwidth=4 expandtab
+set nohlsearch showmatch
+set number relativenumber laststatus=2
 set breakindent smartindent wrap linebreak
-set encoding=UTF-8
-set updatetime=100
-set splitbelow splitright
+set encoding=UTF-8 updatetime=750
 set autowriteall autoread undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
-set noshowmode laststatus=2
 nnoremap <leader>1 :Lexplore %:p:h<CR>
 nnoremap <leader><Tab> <C-^><CR>
 
 autocmd FileType markdown setlocal spell spelllang=en_gb
-for ft in ['html', 'vim', 'terraform', 'css']
-  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
-endfor
-
-if $COLORTERM == 'truecolor'
-  set termguicolors
-endif
 
 # --- Netrw settings-----------------------------------------------------------------
 g:netrw_liststyle = 3
@@ -59,10 +46,8 @@ Plug 'github/copilot.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 # UI modifications
-Plug 'bluz71/vim-mistfly-statusline'
 Plug 'sainnhe/sonokai'
 # Helpers
-Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
 Plug 'janko-m/vim-test'
@@ -74,8 +59,8 @@ plug#end()
 var lspOptions = {
   autoHighlightDiags: true, autoPopulateDiags: true, echoSignature: true, ignoreMissingServer: true,
   outlineOnRight: true, outlineWinSize: 50,
-  semanticHighlight: true, showDiagWithSign: false, showDiagWithVirtualText: true,
-  showInlayHints: false, showSignature: true,
+  semanticHighlight: true, showDiagWithSign: true, showDiagWithVirtualText: false, diagVirtualTextAlign: 'after',
+  showInlayHints: false, showSignature: true, noNewlineInCompletion: true,
 }
 autocmd VimEnter * call LspOptionsSet(lspOptions)
 
@@ -100,14 +85,11 @@ var lspServers = [
   },
   { name: 'tsserver', filetype: ['javascript', 'javascriptreact', 'typescript', 'typescriptreact'], path: 'typescript-language-server', args: ['--stdio'] },
   { name: 'ruff', filetype: ['python'], path: 'ruff', args: ['server'] },
-  { name: 'ty', filetype: ['python'], path: 'ty', args: ['server'] },
+  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
 
 nnoremap gd :LspGotoDefinition<CR>
-nnoremap <leader>r :LspShowReferences<CR>
-nnoremap <leader>i :LspGotoImplementation<CR>
-nnoremap <leader>h :LspHover<CR>
 nnoremap <leader>R :LspRename<CR>
 nnoremap <leader>3 :LspOutline<CR>
 nnoremap <leader>P :LspSymbolSearch<CR>
@@ -122,21 +104,13 @@ nnoremap <leader>p :GFiles<CR>
 nnoremap <leader>F :Rg<CR>
 nnoremap <leader>b :Buffers<CR>
 
-#--- AutoPairs settings ---------------------------------------------------------------"
-g:AutoPairsCompleteOnlyOnSpace = 1
-
-#--- AutoSave settings ----------------------------------------------------------------"
-set noswapfile
-g:auto_save = 1
-g:auto_save_silent = 1
-g:auto_save_events = ["InsertLeave", "TextChanged"]
-
 #--- GitGutter settings ---------------------------------------------------------------"
 nnoremap ]h <Plug>(GitGutterNextHunk)
 nnoremap [h <Plug>(GitGutterPrevHunk)
 g:gitgutter_sign_added = '┃'
 g:gitgutter_sign_modified = '┃'
 g:gitgutter_sign_removed = '┃'
+g:gitgutter_sign_priority = 0
 
 #--- Vim Test settings ----------------------------------------------------------------"
 nnoremap <leader>tn :TestNearest<CR>
