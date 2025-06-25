@@ -46,7 +46,7 @@ Plug 'github/copilot.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 # UI modifications
-Plug 'sainnhe/sonokai'
+Plug 'vim/colorschemes', { 'dir': '~/.vim/pack/packager/start/colorschemes' }
 # Helpers
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
@@ -127,5 +127,5 @@ g:test#go#gotest#executable = 'go test -v'
 g:db_ui_execute_on_save = 0
 
 #--- Colorscheme settings -----------------------------------------------------------------"
-colorscheme sonokai
+colorscheme sorbet # habamax # unokai 
 
