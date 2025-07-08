@@ -9,12 +9,18 @@ set nohlsearch showmatch
 set number relativenumber laststatus=2
 set breakindent smartindent wrap linebreak
 set encoding=UTF-8 updatetime=750
-set autowriteall autoread undofile undodir=~/.local/state/vim/undo
+set noswapfile undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
+set splitright
 nnoremap <leader>1 :Lexplore %:p:h<CR>
 nnoremap <leader><Tab> <C-^><CR>
 
+if has('termguicolors')
+  set termguicolors
+endif
+
 autocmd FileType markdown setlocal spell spelllang=en_gb
+autocmd TextChanged,TextChangedI <buffer> if &readonly == false && filereadable(bufname('%')) | silent write | endif
 
 # --- Netrw settings-----------------------------------------------------------------
 g:netrw_liststyle = 3
@@ -46,7 +52,7 @@ Plug 'github/copilot.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 # UI modifications
-Plug 'vim/colorschemes', { 'dir': '~/.vim/pack/packager/start/colorschemes' }
+Plug 'sainnhe/everforest'
 # Helpers
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
@@ -57,26 +63,30 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-  autoHighlightDiags: true, autoPopulateDiags: true, echoSignature: true, ignoreMissingServer: true,
-  outlineOnRight: true, outlineWinSize: 50,
-  semanticHighlight: true, showDiagWithSign: true, showDiagWithVirtualText: false, diagVirtualTextAlign: 'after',
-  showInlayHints: false, showSignature: true, noNewlineInCompletion: true,
+  autoComplete: v:true,
+  autoPopulateDiags: v:true,
+  showSignature: v:true,
+  echoSignature: v:true,
+  semanticHighlight: v:true,
+  noNewlineInCompletion: v:true,
+  omniComplete: v:true,
+  ignoreMissingServer: v:true,
 }
-autocmd VimEnter * call LspOptionsSet(lspOptions)
+autocmd User LspSetup call LspOptionsSet(lspOptions)
 
 var lspServers = [
   {
     name: 'gopls', filetype: ['go', 'gomod', 'gohtmltmpl', 'gotexttmpl'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
       hints: {
-        assignVariableTypes: false, functionTypeParameters: false, parameterNames: true, constantValues: false,
-        compositeLiteralFields: false, compositeLiteralTypes: false, rangeVariableTypes: false,
+        assignVariableTypes: v:false, functionTypeParameters: v:false, parameterNames: v:true, constantValues: v:false,
+        compositeLiteralFields: v:false, compositeLiteralTypes: v:false, rangeVariableTypes: v:false,
       },
       directoryFilters: ["-**/node_modules", "-**/.git"],
-      analyses: { nilness: true, unusedparams: true, unusedwrite: true, useany: true, ifaceassert: true, fillstructs: true },
-      codelenses: { generate: true, regenerate_cgo: false, vendor: false },
-      semanticTokens: true, semanticTokenTypes: { string: true },
-      hoverKind: 'SingleLine', gofumpt: true, usePlaceholders: false, staticcheck: false, importShortcut: 'Definition',
+      analyses: { nilness: v:true, unusedparams: v:true, unusedwrite: v:true, useany: v:true, ifaceassert: v:true, fillstructs: v:true },
+      codelenses: { generate: v:true, regenerate_cgo: v:false, vendor: v:false },
+      semanticTokens: v:true, semanticTokenTypes: { string: v:true },
+      hoverKind: 'SingleLine', gofumpt: v:true, usePlaceholders: v:false, staticcheck: v:false, importShortcut: 'Definition',
     }},
   },
   { 
@@ -127,5 +137,7 @@ g:test#go#gotest#executable = 'go test -v'
 g:db_ui_execute_on_save = 0
 
 #--- Colorscheme settings -----------------------------------------------------------------"
-colorscheme sorbet # habamax # unokai 
+g:everforest_better_performance = 1
+set background=dark
+colorscheme everforest
 

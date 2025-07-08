@@ -40,24 +40,22 @@ autoload -Uz compinit
 compinit -i
 
 # Enable history, making the history file if it doesn't exist
-if [[ ! -f "${XDG_CACHE_HOME}/zsh/zsh_history" ]]; then
-  mkdir -p "${XDG_CACHE_HOME}/zsh"
-  touch "${XDG_CACHE_HOME}/zsh/zsh_history"
-fi
-HISTFILE=${XDG_CACHE_HOME}/zsh/zsh_history
+HISTFILE=${HOME}/.zsh_history
 HISTSIZE=10000
 SAVEHIST=10000
 setopt appendhistory
+setopt EXTENDED_HISTORY
+setopt HIST_EXPIRE_DUPS_FIRST
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_IGNORE_DUPS
+setopt HIST_SAVE_NO_DUPS
 
 #=== TOOLS ===========================================================================
 
 #--- FZF -----------------------------------------------------------------------------
-# Install if not already installed
 if [[ ! -x "$(command -v fzf)" ]]; then
   $PKG_MGR install fzf
 fi
-
-# Set the default command to use fd
 export FZF_DEFAULT_COMMAND='fd . --type f --follow -H --exclude .git/'
 
 #=== PLUGINS =========================================================================
@@ -92,9 +90,8 @@ function update_plugins() {
   done
 }
 
-#--- Plugins ---------- --------------------------------------------------------------
+#--- Plugins -------------------------------------------------------------------------
 source_plugin "zsh-autosuggestions" "https://github.com/zsh-users/zsh-autosuggestions"
-source_plugin "zsh-z" "https://github.com/agkozak/zsh-z"
 source_plugin "zsh-syntax-highlighting" "https://github.com/zsh-users/zsh-syntax-highlighting"
 source_plugin "powerlevel10k" "https://github.com/romkatv/powerlevel10k"
 
@@ -114,9 +111,11 @@ export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
 #=== USER CONFIGURATION ===============================================================
 
 export EDITOR='vim'
-export DB_UI_DEFAULT="postgresql://localhost:5432/postgres"
-export DB_UI_DAGSTER="postgresql://localhost:5432/dagster"
 export BAT_THEME="ansi"
+if [[ "$(uname)" = "Darwin" ]]; then
+    export DOCKER_HOST="unix://${HOME}/.config/colima/default/docker.sock"
+    export TESTCONTAINERS_DOCKER_SOCKET_OVERRIDE="/var/run/docker.sock"
+fi
 
 #--- Rust toolchain -----------------------------------------------------------------
 
@@ -142,12 +141,6 @@ fi
 alias dy="dig +short @dns.toys"
 
 #--- Functions -----------------------------------------------------------------------
-zzarr_ls() {
-  python -c "exec(\"\\nimport ocf_blosc2\\nimport xarray as xr\\nimport zarr\\nds = xr.open_zarr('zip::$1').compute()\\nprint(ds)\\n\")";
-}
-zarr_ls() {
-  python -c "exec(\"\\nimport ocf_blosc2\\nimport xarray as xr\\nimport zarr\\nds = xr.open_zarr('$1').compute()\\nprint(ds)\\n\")";
-}
 dudir() {
   du -ha $1 | sort -h | tail -22
 }
