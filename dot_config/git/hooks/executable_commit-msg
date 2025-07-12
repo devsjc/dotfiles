@@ -1,19 +1,16 @@
 #!/bin/sh
 
-# regex to validate in commit msg
-commit_regex="^(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?: .+$"
+# Allows for standard conventional commits OR git's auto-squash prefixes.
+commit_regex="^((fixup|squash|amend)!|(feat|fix|docs|style|refactor|perf|test|chore)(\(.+\))?:) .+$"
 
 if ! grep -iqE "$commit_regex" "$1"; then
-    echo "Aborting commit."  >&2
-    echo "Commits should be of the form 'type(scope): message' where type is one of the following:"  >&2
-    echo "  feat:     A new feature"  >&2
-    echo "  fix:      A bug fix"  >&2
-    echo "  docs:     Documentation only changes"  >&2
-    echo "  style:    Non-code changes (white-space, formatting, missing semi-colons, etc)"  >&2
-    echo "  refactor: A code change that neither fixes a bug nor adds a feature"  >&2
-    echo "  perf:     A code change that improves performance"  >&2
-    echo "  test:     Adding missing tests or correcting existing tests"  >&2
-    echo "  chore:    Changes to the build process or auxiliary tools and libraries such as documentation generation"  >&2
-    exit 1
+  echo "Aborting commit." >&2
+  echo "Commit messages should follow the conventional commit format or use a git autosquash prefix." >&2
+  echo "" >&2
+  echo "Conventional format: 'type(scope): message'" >&2
+  echo "Allowed types: feat, fix, docs, style, refactor, perf, test, chore" >&2
+  echo "" >&2
+  echo "Autosquash prefixes: 'fixup!', 'squash!', 'amend!'" >&2
+  echo "Example: 'fixup! feat(user): add new login button'" >&2
+  exit 1
 fi
-
