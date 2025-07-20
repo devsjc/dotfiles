@@ -40,4 +40,4 @@
 [init]
 	defaultBranch = main
 [core]
-	hooksPath = ~/.config/git/hooks
+	hooksPath = /Users/solc/.config/git/hooks
