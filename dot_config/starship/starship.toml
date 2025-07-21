@@ -10,7 +10,7 @@ $character"""
 
 right_format = """
 $cmd_duration\
-$conda\
+$python\
 $rust\
 $golang\
 $time"""
@@ -30,11 +30,10 @@ style = 'green'
 symbol = '  '
 [git_status]
 style = 'blue'
-format = '([$all_status$ahead_behind]($style))'
-untracked = '[?$count](blue) '
 staged = '[+$count](yellow) '
 ahead = '[⇡$count](green) '
 behind = '[⇣$count](green) '
+format = '([$all_status$ahead_behind]($style))'
 
 [cmd_duration]
 style = 'yellow'
@@ -43,11 +42,8 @@ format = 'took [ $duration]($style) '
 [python]
 style = 'cyan'
 symbol = ' '
-
-[conda]
-style = 'cyan'
-format = '[$symbol$environment]($style) '
-symbol = ' '
+python_binary = ['uv run python', 'python']
+detect_files = ['pyproject.toml', 'uv.lock']
 
 [os]
 style = 'bold white'
