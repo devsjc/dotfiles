@@ -1,5 +1,4 @@
 #=== ZSH SETTINGS ====================================================================
-
 # If brew exists, add it's autocompletion files to the fpath
 if type brew &>/dev/null
 then
@@ -22,6 +21,9 @@ export XDG_CONFIG_HOME=${XDG_CONFIG_HOME:-$HOME/.config}
 export XDG_DATA_HOME=${XDG_DATA_HOME:-$HOME/.local/share}
 export XDG_CACHE_HOME=${XDG_CACHE_HOME:-$HOME/.cache}
 export XDG_BIN_HOME=${XDG_BIN_HOME:-$HOME/.local/bin}
+if [[ ":$PATH:" != *":${XDG_BIN_HOME}:"* ]]; then
+    export PATH="${XDG_BIN_HOME}:${PATH}"
+fi
 
 # Custom exports
 export EDITOR='vim'
@@ -52,8 +54,11 @@ eval "$(starship init zsh)"
 bindkey -v
 
 # Add syntax highlighting - MUST BE DONE LAST
-wget https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz && \
-  tar -xzf master.tar.gz && rm master.tar.gz && \
-  mv -f zsh-syntax-highlighting-master "${XDG_DATA_HOME}/zsh-syntax-highlighting"
+if ! [[ -d "${XDG_DATA_HOME}/zsh-syntax-highlighting" ]]; then
+    wget https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz && \
+      tar -xzf master.tar.gz && rm master.tar.gz && \
+      mv zsh-syntax-highlighting-master zsh-syntax-highlighting && \
+      mv -f zsh-syntax-highlighting "${XDG_DATA_HOME}/"
+fi
 source "${XDG_DATA_HOME}/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
