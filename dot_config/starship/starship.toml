@@ -16,7 +16,13 @@ $golang\
 $time"""
 
 [hostname]
-ssh_symbol = " "
+style = 'dimmed white'
+ssh_symbol = '@'
+
+[username]
+style_root = 'dimmed white'
+style_user = 'dimmed white'
+format = '[$user]($style)'
 
 [directory]
 style = 'blue'
