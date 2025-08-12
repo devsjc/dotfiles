@@ -17,6 +17,7 @@ $time"""
 
 [hostname]
 style = 'dimmed white'
+format = '[$ssh_symbol$hostname]($style) '
 ssh_symbol = '@'
 
 [username]
