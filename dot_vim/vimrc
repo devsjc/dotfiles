@@ -76,7 +76,7 @@ var lspServers = [
     name: 'golangci-lint', filetype: ['go'], path: 'golangci-lint-langserver', args: [],
     initializationOptions: { command: [
         'golangci-lint', 'run', '--output.json.path', 'stdout', '--show-stats=false', '--issues-exit-code=1',
-        '--enable=exhaustive,exhauststruct,godot,perfsprint,misspell,wsl_v5'
+        '--enable=exhaustive,exhaustruct,godot,perfsprint,misspell,wsl_v5'
     ]},
   },
   {
