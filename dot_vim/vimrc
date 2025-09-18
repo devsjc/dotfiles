@@ -73,11 +73,19 @@ autocmd User LspSetup call LspOptionsSet(lspOptions)
 
 var lspServers = [
   {
+    name: 'golangci-lint', filetype: ['go'], path: 'golangci-lint-langserver', args: [],
+    initializationOptions: { command: [
+        'golangci-lint', 'run', '--output.json.path', 'stdout', '--show-stats=false', '--issues-exit-code=1',
+        '--enable=exhaustive,exhauststruct,godot,perfsprint,misspell,wsl_v5'
+    ]},
+  },
+  {
     name: 'gopls', filetype: ['go'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
       directoryFilters: ["-**/node_modules", "-**/.git"],
-      semanticTokens: v:true, semanticTokenTypes: { string: v:true },
-      hoverKind: 'SingleLine', gofumpt: v:true,
+      semanticTokens: v:false, semanticTokenTypes: { string: v:false },
+      gofumpt: v:false, staticcheck: v:false, linksInHover: v:false,
+      diagnosticsDelay: '250ms', diagnosticsTrigger: 'save',
     }},
   },
   { 
