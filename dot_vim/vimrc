@@ -44,8 +44,7 @@ endif
 
 plug#begin('~/.vim/pack/packager/start')
 # Navigation, search, language features
-Plug 'junegunn/fzf', { 'dir': '~/.vim/pack/packager/opt/fzf', 'do': { -> fzf#install() }}
-Plug 'junegunn/fzf.vim',
+Plug 'junegunn/fzf', { 'dir': '~/.vim/pack/packager/opt/fzf' } | Plug 'junegunn/fzf.vim',
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
 Plug 'github/copilot.vim'
 # Version control
@@ -58,8 +57,7 @@ Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
 Plug 'janko-m/vim-test'
-Plug 'tpope/vim-dadbod'
-Plug 'kristijanhusak/vim-dadbod-ui'
+Plug 'tpope/vim-dadbod' | Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
@@ -76,7 +74,7 @@ var lspServers = [
     name: 'golangci-lint', filetype: ['go'], path: 'golangci-lint-langserver', args: [],
     initializationOptions: { command: [
         'golangci-lint', 'run', '--output.json.path', 'stdout', '--show-stats=false', '--issues-exit-code=1',
-        '--enable=exhaustive,exhaustruct,godot,perfsprint,misspell,wsl_v5'
+        '--enable=godot,perfsprint,misspell,wsl_v5'
     ]},
   },
   {
@@ -109,6 +107,7 @@ nnoremap <leader>L :LspFormat<CR>
 nnoremap <leader><CR> :LspCodeAction<CR>
 
 #--- FZF Settings ------------------------------------------------------------"
+$FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
 nnoremap <leader>f :BLines<CR>
 nnoremap <leader>p :GFiles<CR>
 nnoremap <leader>F :Rg<CR>
