@@ -4,11 +4,11 @@ vim9script
 unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 g:mapleader = ' '      # Set the leader key to space
-set tabstop=4 shiftwidth=4 expandtab
+filetype indent plugin on
 set nohlsearch showmatch
 set number relativenumber laststatus=2
-set breakindent smartindent wrap linebreak
-set encoding=UTF-8 updatetime=750
+set autoindent breakindent wrap linebreak
+set encoding=UTF-8 updatetime=750 autoread
 set noswapfile undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
 set splitright
@@ -62,27 +62,23 @@ plug#end()
 
 #--- LSP settings ---------------------------------------------------------------------
 var lspOptions = {
-  autoComplete: v:true, noNewlineInCompletion: v:true,
-  autoPopulateDiags: v:true, ignoreMissingServer: v:true,
-  showSignature: v:true, semanticHighlight: v:true,
-  outlineOnRight: v:true, outlineWinSize: 60,
+  autoComplete: true, noNewlineInCompletion: true,
+  autoPopulateDiags: true, condensedCompletionMenu: true,
+  ignoreMissingServer: true, showInlayHints: true,
+  showSignature: true, semanticHighlight: false,
+  outlineOnRight: true, outlineWinSize: 60,
 }
 autocmd User LspSetup call LspOptionsSet(lspOptions)
 
 var lspServers = [
   {
-    name: 'golangci-lint', filetype: ['go'], path: 'golangci-lint-langserver', args: [],
-    initializationOptions: { command: [
-        'golangci-lint', 'run', '--output.json.path', 'stdout', '--show-stats=false', '--issues-exit-code=1',
-        '--enable=godot,perfsprint,misspell,wsl_v5'
-    ]},
-  },
-  {
     name: 'gopls', filetype: ['go'],  path: 'gopls', args: ['serve'],
     workspaceConfig: { gopls: {
       directoryFilters: ["-**/node_modules", "-**/.git"],
-      semanticTokens: v:false, semanticTokenTypes: { string: v:false },
-      gofumpt: v:false, staticcheck: v:false, linksInHover: v:false,
+      annotations: { bounds: true, escape: false, inline: false, nil: true },
+      semanticTokens: false, semanticTokenTypes: { string: false },
+      usePlaceholders: true, hoverKind: "FullDocumentation",
+      gofumpt: false, staticcheck: false, linksInHover: false,
       diagnosticsDelay: '250ms', diagnosticsTrigger: 'save',
     }},
   },
@@ -93,6 +89,8 @@ var lspServers = [
   { name: 'tsserver', filetype: ['javascript', 'typescript'], path: 'typescript-language-server', args: ['--stdio'] },
   { name: 'ruff', filetype: ['python'], path: 'ruff', args: ['server'] },
   { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
+  { name: 'yaml-language-server', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'] },
+
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
 

@@ -53,6 +53,15 @@ source <(fzf --zsh)
 eval "$(starship init zsh)"
 bindkey -v
 
+# Add Go bin to PATH if go exists
+if [[ -d "${HOME}/go" ]]; then
+    export GOPATH="${HOME}/go"
+    export GOBIN="${GOPATH}/bin"
+    if [[ ":$PATH:" != *":${HOME}/go:"* ]]; then
+        export PATH="${HOME}/go:${PATH}"
+    fi
+fi
+
 # Add syntax highlighting - MUST BE DONE LAST
 if ! [[ -d "${XDG_DATA_HOME}/zsh-syntax-highlighting" ]]; then
     wget https://github.com/zsh-users/zsh-syntax-highlighting/archive/master.tar.gz && \
