@@ -51,7 +51,7 @@ Plug 'github/copilot.vim'
 Plug 'tpope/vim-fugitive'
 Plug 'airblade/vim-gitgutter'
 # UI modifications
-Plug 'sainnhe/everforest'
+Plug 'jeffkreeftmeijer/vim-dim'
 # Helpers
 Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
@@ -138,7 +138,9 @@ g:auto_save = 1
 g:auto_save_silent = 1
 
 #--- Colorscheme settings -----------------------------------------------------------------"
-g:everforest_better_performance = 1
 set background=dark
-colorscheme everforest
-
+colorscheme dim
+highlight SignColumn ctermbg=None
+highlight GitGutterAdd ctermbg=None
+highlight GitGutterChange ctermbg=None
+highlight GitGutterDelete ctermbg=None
