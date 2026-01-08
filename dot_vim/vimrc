@@ -7,7 +7,7 @@ g:mapleader = ' '      # Set the leader key to space
 filetype indent plugin on
 set nohlsearch showmatch
 set number relativenumber laststatus=2
-set autoindent breakindent wrap linebreak
+set autoindent breakindent wrap linebreak textwidth=100
 set encoding=UTF-8 updatetime=750 autoread
 set noswapfile undofile undodir=~/.local/state/vim/undo
 set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
