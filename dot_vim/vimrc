@@ -48,10 +48,9 @@ Plug 'junegunn/fzf', { 'dir': '~/.vim/pack/packager/opt/fzf' } | Plug 'junegunn/
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
 Plug 'github/copilot.vim'
 # Version control
-Plug 'tpope/vim-fugitive'
-Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive' | Plug 'airblade/vim-gitgutter'
 # UI modifications
-Plug 'jeffkreeftmeijer/vim-dim'
+Plug 'sainnhe/everforest' | Plug 'sheerun/vim-polyglot'
 # Helpers
 Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
@@ -138,9 +137,9 @@ g:auto_save = 1
 g:auto_save_silent = 1
 
 #--- Colorscheme settings -----------------------------------------------------------------"
+g:everforest_better_performance = 1
+g:everforest_enable_italic = 1
+g:everforest_background = 'medium'
+g:everforest_transparent_background = 2
 set background=dark
-colorscheme dim
-highlight SignColumn ctermbg=None
-highlight GitGutterAdd ctermbg=None
-highlight GitGutterChange ctermbg=None
-highlight GitGutterDelete ctermbg=None
+colorscheme everforest
