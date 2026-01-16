@@ -1,42 +1,47 @@
 vim9script
 #=== VIM SETTINGS =====================================================================
 
+# Enable defaults, including syntax highlighting and filetype detection
 unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
-g:mapleader = ' '      # Set the leader key to space
-filetype indent plugin on
-set nohlsearch showmatch
-set number relativenumber laststatus=2
-set autoindent breakindent wrap linebreak textwidth=100
+packadd comment
+
+g:mapleader = ' '
+set number relativenumber laststatus=2 splitright
+set autoindent smartindent breakindent wrap textwidth=100
+set tabstop=4 shiftwidth=4 expandtab
+for ft in ['html', 'vim', 'terraform', 'css']
+  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
+endfor
 set encoding=UTF-8 updatetime=750 autoread
-set noswapfile undofile undodir=~/.local/state/vim/undo
-set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store
-set splitright
-nnoremap <leader>1 :Lexplore %:p:h<CR>
+set noswapfile undofile undodir=~/.local/state/vim/undo history=1000
+set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store,*/*cache*/*
+set wildmode=list:longest,list:full wrapscan
 nnoremap <leader><Tab> <C-^><CR>
 
 if has('termguicolors')
   set termguicolors
 endif
 
-autocmd FileType markdown setlocal spell spelllang=en_gb
-autocmd TextChanged,TextChangedI <buffer> if &readonly == false && filereadable(bufname('%')) | silent write | endif
+set background=dark
+colorscheme retrobox
 
-# --- Netrw settings-----------------------------------------------------------------
+autocmd FileType markdown typst setlocal spell spelllang=en_gb
+autocmd InsertLeave <buffer> if &readonly == false && filereadable(bufname('%')) | silent update | endif
+
+augroup custom
+  autocmd!
+  autocmd FileType netrw setlocal bufhidden=wipe
+augroup end
+
 g:netrw_liststyle = 3
 g:netrw_fastbrowse = 0
 g:netrw_localcopydircmd = 'cp -r'
 g:netrw_winsize = 30
 g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$,*/_trial_temp*"'
 
-augroup netrw
-  autocmd!
-  autocmd FileType netrw setlocal bufhidden=wipe
-augroup end
-
 
 #=== PLUGINS ==========================================================================
-
 # Automatically download vim-plug if not present
 if empty(glob('~/.vim/autoload/plug.vim'))
   execute '!curl -fLo ~/.vim/autoload/plug.vim --create-dirs https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
@@ -44,71 +49,22 @@ endif
 
 plug#begin('~/.vim/pack/packager/start')
 # Navigation, search, language features
-Plug 'junegunn/fzf', { 'dir': '~/.vim/pack/packager/opt/fzf' } | Plug 'junegunn/fzf.vim',
+Plug 'girishji/scope.vim'
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
 Plug 'github/copilot.vim'
 # Version control
 Plug 'tpope/vim-fugitive' | Plug 'airblade/vim-gitgutter'
-# UI modifications
-Plug 'sainnhe/everforest' | Plug 'sheerun/vim-polyglot'
 # Helpers
-Plug '907th/vim-auto-save'
 Plug 'christoomey/vim-tmux-navigator'
 Plug 'tpope/vim-dispatch'
-Plug 'janko-m/vim-test'
 Plug 'tpope/vim-dadbod' | Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
 
-#--- LSP settings ---------------------------------------------------------------------
-var lspOptions = {
-  autoComplete: true, noNewlineInCompletion: true,
-  autoPopulateDiags: true, condensedCompletionMenu: true,
-  ignoreMissingServer: true, showInlayHints: true,
-  showSignature: true, semanticHighlight: false,
-  outlineOnRight: true, outlineWinSize: 60,
-}
-autocmd User LspSetup call LspOptionsSet(lspOptions)
-
-var lspServers = [
-  {
-    name: 'gopls', filetype: ['go'],  path: 'gopls', args: ['serve'],
-    workspaceConfig: { gopls: {
-      directoryFilters: ["-**/node_modules", "-**/.git"],
-      annotations: { bounds: true, escape: false, inline: false, nil: true },
-      semanticTokens: false, semanticTokenTypes: { string: false },
-      usePlaceholders: true, hoverKind: "FullDocumentation",
-      gofumpt: false, staticcheck: false, linksInHover: false,
-      diagnosticsDelay: '250ms', diagnosticsTrigger: 'save',
-    }},
-  },
-  { 
-    name: 'rustanalyzer', filetype: ['rust'], path: 'rust-analyzer', args: [], syncInit: true,
-    initializationOptions: { inlayHints: { typeHints: { enable: true }, parameterHints: { enable: true }}},
-  },
-  { name: 'tsserver', filetype: ['javascript', 'typescript'], path: 'typescript-language-server', args: ['--stdio'] },
-  { name: 'ruff', filetype: ['python'], path: 'ruff', args: ['server'] },
-  { name: 'pylsp', filetype: ['python'], path: 'pylsp', args: [] },
-  { name: 'yaml-language-server', filetype: ['yaml'], path: 'yaml-language-server', args: ['--stdio'] },
-
-]
-autocmd User LspSetup call LspAddServer(lspServers)
-
-nnoremap gd :LspGotoDefinition<CR>
-nnoremap gi :LspGotoImpl<CR>
-nnoremap <leader>R :LspRename<CR>
-nnoremap <leader>3 :LspOutline<CR>
-nnoremap <leader>P :LspSymbolSearch<CR>
-nnoremap ]e :LspDiagNext<CR>
-nnoremap [e :LspDiagPrev<CR>
-nnoremap <leader>L :LspFormat<CR>
-nnoremap <leader><CR> :LspCodeAction<CR>
-
-#--- FZF Settings ------------------------------------------------------------"
-$FZF_DEFAULT_OPTS = '--bind ctrl-a:select-all'
-nnoremap <leader>f :BLines<CR>
-nnoremap <leader>p :GFiles<CR>
-nnoremap <leader>F :Rg<CR>
-nnoremap <leader>b :Buffers<CR>
+#--- Scope settings --------------------------------------------------------------------
+import autoload 'scope/fuzzy.vim'
+nnoremap <leader>p :Scope File<CR>
+nnoremap <leader>F :Scope Grep<CR>
+nnoremap <leader>f :Scope BufSearch<CR>
 
 #--- GitGutter settings ---------------------------------------------------------------"
 nnoremap ]h <Plug>(GitGutterNextHunk)
@@ -118,28 +74,5 @@ g:gitgutter_sign_modified = '┃'
 g:gitgutter_sign_removed = '┃'
 g:gitgutter_sign_priority = 0
 
-#--- Vim Test settings ----------------------------------------------------------------"
-nnoremap <leader>tn :TestNearest<CR>
-nnoremap <leader>tf :TestFile<CR>
-nnoremap <leader>tl :TestLast<CR>
-
-g:test#strategy = "dispatch"
-g:test#python#pytest#executable = 'python -m pytest -rA'
-g:test#python#pyunit#executable = 'python -m unittest --buffer'
-g:test#python#runner = 'pyunit'
-g:test#go#gotest#executable = 'go test -v'
-
 #--- DadBodUI Settings --------------------------------------------------------------------"
 g:db_ui_execute_on_save = 0
-
-#--- Auto Save Settings -------------------------------------------------------------------"
-g:auto_save = 1
-g:auto_save_silent = 1
-
-#--- Colorscheme settings -----------------------------------------------------------------"
-g:everforest_better_performance = 1
-g:everforest_enable_italic = 1
-g:everforest_background = 'medium'
-g:everforest_transparent_background = 2
-set background=dark
-colorscheme everforest

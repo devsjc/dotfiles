@@ -1,11 +1,37 @@
 #=== ZSH SETTINGS ====================================================================
+autoload -Uz promptinit && promptinit
+autoload -U colors && colors
+PS1="%{$fg[blue]%}%n@%m %{$fg[cyan]%}%~ %{$reset_color%}%% "
+
+# Use modern completion system
+autoload -Uz compinit && compinit
+zstyle ':completion:*' auto-description 'specify: %d'
+zstyle ':completion:*' completer _expand _complete _correct _approximate
+zstyle ':completion:*' group-name ''
+zstyle ':completion:*' menu select=2
+zstyle ':completion:*:default' list-colors ${(s.:.)LS_COLORS}
+zstyle ':completion:*' list-colors ''
+zstyle ':completion:*' list-prompt %SAt %p: Hit TAB for more, or the character to insert%s
+zstyle ':completion:*' matcher-list '' 'm:{a-z}={A-Z}' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=* l:|=*'
+zstyle ':completion:*' menu select=long
+zstyle ':completion:*' select-prompt %SScrolling active: current selection at %p%s
+zstyle ':completion:*' use-compctl false
+zstyle ':completion:*' verbose true
+
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
+zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
+
 # If brew exists, add it's autocompletion files to the fpath
 if type brew &>/dev/null
 then
   FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
 fi
 
+# Add newline after each command
+precmd() { precmd() { echo } }
+
 # Enable history, prevent saving of duplicates
+export EDITOR='vim'
 export HISTFILE=${HOME}/.zsh_history
 export HISTSIZE=100000
 export SAVEHIST=${HISTSIZE}
@@ -26,8 +52,6 @@ if [[ ":$PATH:" != *":${XDG_BIN_HOME}:"* ]]; then
 fi
 
 # Custom exports
-export EDITOR='vim'
-export STARSHIP_CONFIG="${XDG_CONFIG_HOME}/starship/starship.toml"
 export BAT_THEME="ansi"
 if [[ "$(uname)" = "Darwin" ]]; then
     export DOCKER_HOST="unix://${HOME}/.config/colima/default/docker.sock"
@@ -45,13 +69,6 @@ if [[ -x "$(command -v eza)" ]]; then
   alias la="eza --long --all --group --git --git-repos"
 fi
 alias dy="dig +short @dns.toys"
-
-# Enable autocompletion, fzf
-autoload -U compinit; compinit
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
-source <(fzf --zsh)
-eval "$(starship init zsh)"
-bindkey -v
 
 # Add Go bin to PATH if go exists
 if [[ -d "${HOME}/go" ]]; then
