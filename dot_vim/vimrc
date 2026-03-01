@@ -1,23 +1,31 @@
 vim9script
-#=== VIM SETTINGS =====================================================================
 
-# Enable defaults, including syntax highlighting and filetype detection
 unlet! g:skip_defaults_vim
 source $VIMRUNTIME/defaults.vim
 packadd comment
+set number relativenumber laststatus=2 splitright
+set autoread autowrite noswapfile
+set undofile undodir=~/.local/state/vim/undo history=1000
+set path+=** wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store,*\.pyc,*\.egg*
+set wildmenu wildoptions=pum,fuzzy pumheight=12 wildmode=longest:full,full
 
 g:mapleader = ' '
-set number relativenumber laststatus=2 splitright
-set autoindent smartindent breakindent wrap textwidth=100
-set tabstop=4 shiftwidth=4 expandtab
-for ft in ['html', 'vim', 'terraform', 'css']
-  execute 'autocmd FileType ' .. ft .. ' setlocal tabstop=2 shiftwidth=2'
-endfor
-set encoding=UTF-8 updatetime=750 autoread
-set noswapfile undofile undodir=~/.local/state/vim/undo history=1000
-set path+=** wildmenu wildignore+=*/node_modules/*,*/.git/*,*/.DS_Store,*/*cache*/*
-set wildmode=list:longest,list:full wrapscan
 nnoremap <leader><Tab> <C-^><CR>
+nnoremap <leader>p :<C-u>find<space>*
+nnoremap <Leader>f :lvimgrep // %<Left><Left><Left>
+nnoremap <Leader>F :lgrep "" `git ls-files`<Left><Left><Left><Left><Left><Left>
+nnoremap [l :lprev<CR> | nnoremap ]l :lnext<CR>
+nnoremap ]q :cnext<CR> | nnoremap [q :cprev<CR>
+
+augroup AutoLocList
+    autocmd!
+    autocmd QuickFixCmdPost l* lopen
+augroup END
+
+g:netrw_liststyle = 3
+g:netrw_fastbrowse = 0
+g:netrw_winsize = 30
+g:netrw_list_hide = &wildignore
 
 if has('termguicolors')
   set termguicolors
@@ -26,21 +34,6 @@ endif
 set background=dark
 colorscheme retrobox
 
-autocmd FileType markdown typst setlocal spell spelllang=en_gb
-autocmd InsertLeave <buffer> if &readonly == false && filereadable(bufname('%')) | silent update | endif
-
-augroup custom
-  autocmd!
-  autocmd FileType netrw setlocal bufhidden=wipe
-augroup end
-
-g:netrw_liststyle = 3
-g:netrw_fastbrowse = 0
-g:netrw_localcopydircmd = 'cp -r'
-g:netrw_winsize = 30
-g:netrw_list_hide = '^\.,\~,*\.pyc,*\.egg*$,*/_trial_temp*"'
-
-
 #=== PLUGINS ==========================================================================
 # Automatically download vim-plug if not present
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -48,31 +41,11 @@ if empty(glob('~/.vim/autoload/plug.vim'))
 endif
 
 plug#begin('~/.vim/pack/packager/start')
-# Navigation, search, language features
-Plug 'girishji/scope.vim'
-Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' }
-Plug 'github/copilot.vim'
-# Version control
-Plug 'tpope/vim-fugitive' | Plug 'airblade/vim-gitgutter'
-# Helpers
-Plug 'christoomey/vim-tmux-navigator'
-Plug 'tpope/vim-dispatch'
+Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' } | Plug 'github/copilot.vim'
+Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-dadbod' | Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
 
-#--- Scope settings --------------------------------------------------------------------
-import autoload 'scope/fuzzy.vim'
-nnoremap <leader>p :Scope File<CR>
-nnoremap <leader>F :Scope Grep<CR>
-nnoremap <leader>f :Scope BufSearch<CR>
-
-#--- GitGutter settings ---------------------------------------------------------------"
-nnoremap ]h <Plug>(GitGutterNextHunk)
-nnoremap [h <Plug>(GitGutterPrevHunk)
-g:gitgutter_sign_added = '┃'
-g:gitgutter_sign_modified = '┃'
-g:gitgutter_sign_removed = '┃'
-g:gitgutter_sign_priority = 0
-
 #--- DadBodUI Settings --------------------------------------------------------------------"
 g:db_ui_execute_on_save = 0
+
