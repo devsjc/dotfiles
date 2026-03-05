@@ -16,6 +16,7 @@ nnoremap <Leader>f :lvimgrep // %<Left><Left><Left>
 nnoremap <Leader>F :lgrep "" `git ls-files`<Left><Left><Left><Left><Left><Left>
 nnoremap [l :lprev<CR> | nnoremap ]l :lnext<CR>
 nnoremap ]q :cnext<CR> | nnoremap [q :cprev<CR>
+cnoremap <expr> <C-v> getcmdline() =~# '^\s*find\>' ? "\<C-b>vertical s\<CR>" : "\<C-v>"
 
 augroup AutoLocList
     autocmd!
@@ -45,6 +46,12 @@ Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' } | Plug 'github/co
 Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-dispatch'
 Plug 'tpope/vim-dadbod' | Plug 'kristijanhusak/vim-dadbod-ui'
 plug#end()
+
+var lspServers = [
+  { name: 'gopls', filetype: ['go'],  path: 'gopls', args: ['serve'] },
+  { name: 'ty', filetype: ['python'], path: 'ty', args: ['server'] },
+]
+autocmd User LspSetup call LspAddServer(lspServers)
 
 #--- DadBodUI Settings --------------------------------------------------------------------"
 g:db_ui_execute_on_save = 0
