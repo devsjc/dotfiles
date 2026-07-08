@@ -23,10 +23,7 @@ augroup AutoLocList
     autocmd QuickFixCmdPost l* lopen
 augroup END
 
-g:netrw_liststyle = 3
-g:netrw_fastbrowse = 0
-g:netrw_winsize = 30
-g:netrw_list_hide = &wildignore
+g:netrw_liststyle = 3 | g:netrw_fastbrowse = 0 | g:netrw_winsize = 30 | g:netrw_list_hide = &wildignore
 
 if has('termguicolors')
   set termguicolors
@@ -43,16 +40,25 @@ endif
 
 plug#begin('~/.vim/pack/packager/start')
 Plug 'yegappan/lsp', { 'dir': '~/.vim/pack/packager/opt/lsp' } | Plug 'github/copilot.vim'
-Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-dispatch'
+Plug 'tpope/vim-fugitive' | Plug 'tpope/vim-dispatch' | Plug 'vim-test/vim-test'
 Plug 'tpope/vim-dadbod' | Plug 'kristijanhusak/vim-dadbod-ui'
+Plug 'puremourning/vimspector' | Plug 'christoomey/vim-tmux-navigator'
 plug#end()
 
 var lspServers = [
   { name: 'gopls', filetype: ['go'],  path: 'gopls', args: ['serve'] },
   { name: 'ty', filetype: ['python'], path: 'ty', args: ['server'] },
+  { name: 'buf', filetype: ['proto'], path: 'buf', args: ['lsp', 'serve'] },
 ]
 autocmd User LspSetup call LspAddServer(lspServers)
+var lspOpts = { noNewlineInCompletion: true, ignoreMissingServer: true }
+autocmd User LspSetup call LspOptionsSet(lspOpts)
 
-#--- DadBodUI Settings --------------------------------------------------------------------"
+#--- Plugin Settings --------------------------------------------------------------------"
 g:db_ui_execute_on_save = 0
+# Vim Test
+nnoremap <leader>tn :TestNearest<CR> | nnoremap <leader>tf :TestFile<CR> | nnoremap <leader>tl :TestLast<CR>
+g:test#strategy = "dispatch"
+# LSP
+nnoremap ]e :LspDiagNext<CR> | nnoremap [e :LspDiagPrev<CR>
 
