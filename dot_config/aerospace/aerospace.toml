@@ -156,11 +156,15 @@ if.app-id = 'org.mozilla.firefox'
 run = 'move-node-to-workspace B'
 
 [[on-window-detected]]
-if.app-id = 'com.googlecode.iterm2'
+if.app-id = 'org.alacritty'
 run = 'move-node-to-workspace T'
 
 [[on-window-detected]]
 if.app-id = 'com.tinyspec.slackmacgap'
+run = 'move-node-to-workspace M'
+
+[[on-window-detected]]
+if.app-id = 'com.automattic.beeper.desktop'
 run = 'move-node-to-workspace M'
 
 [[on-window-detected]]
